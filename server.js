@@ -11,6 +11,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+
 const JWT_SECRET = process.env.JWT_SECRET || 'ganti-secret-ini-nanti';
 
 const pool = new Pool({
