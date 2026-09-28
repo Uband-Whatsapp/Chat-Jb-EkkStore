@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>EKK CHAT</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0; font-family: system-ui, -apple-system, sans-serif;
+    background: #0b1220; color: #e6eaf2; height: 100dvh;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+
+  /* Auth screen */
+  #auth { padding: 24px; display: flex; flex-direction: column; gap: 12px; max-width: 380px; margin: auto; width: 100%; }
+  #auth h1 { text-align: center; margin: 0 0 8px; font-size: 26px; }
+  #auth input { padding: 12px; border-radius: 10px; border: 1px solid #1f2a44; background: #101828; }
+  #auth button { padding: 12px; border-radius: 10px; border: 0; background: #3b82f6; color: white; font-weight: 600; }
+  #auth .link { background: transparent; color: #98a2b3; font-size: 14px; }
+  .err { color: #f87171; font-size: 14px; text-align: center; }
+
+  /* App shell */
+  #app { display: none; flex: 1; flex-direction: column; min-height: 0; }
+  header {
+    display: flex; align-items: center; gap: 8px; padding: 10px 12px;
+    background: #101828; border-bottom: 1px solid #1f2a44;
+  }
+  header .title { flex: 1; font-weight: 600; }
+  header button { background: #1a2338; border: 0; padding: 8px 12px; border-radius: 8px; }
+
+  #body { flex: 1; display: flex; min-height: 0; }
+
+  /* Sidebar */
+  #sidebar { width: 100%; max-width: 100%; display: flex; flex-direction: column; background: #101828; }
+  #sidebar.hidden { display: none; }
+  #sidebar .search { padding: 10px; }
+  #sidebar .search input { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #1f2a44; background: #0b1220; }
+  #userList { flex: 1; overflow-y: auto; }
+  .userRow { display: flex; gap: 10px; padding: 10px 12px; border-bottom: 1px solid #1a2338; align-items: center; }
+  .userRow .av { width: 40px; height: 40px; border-radius: 50%; background: #3b82f6; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+  .userRow .info { min-width: 0; }
+  .userRow .info .n { font-weight: 500; }
+  .userRow .info .u { font-size: 12px; color: #98a2b3; }
+
+  /* Chat area */
+  #chat { display: none; flex-direction: column; flex: 1; min-width: 0; }
+  #chat.active { display: flex; }
+  @media (min-width: 700px) {
+    #body { flex-direction: row; }
+    #sidebar { max-width: 340px; border-right: 1px solid #1f2a44; }
+    #sidebar.hidden { display: flex; }
+    #chat { display: none; }
+    #chat.active { display: flex; }
+  }
+  #messages { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+  .msg { max-width: 78%; padding: 8px 12px; border-radius: 16px; line-height: 1.35; word-wrap: break-word; animation: pop .15s ease-out; }
+  .msg.me { align-self: flex-end; background: #2563eb; color: white; border-bottom-right-radius: 4px; }
+  .msg.them { align-self: flex-start; background: #1a2338; border-bottom-left-radius: 4px; }
+  .msg .time { font-size: 10px; opacity: .7; margin-top: 2px; text-align: right; }
+  @keyframes pop { from { transform: scale(.92); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+  #typing { padding: 4px 12px; font-size: 12px; color: #98a2b3; height: 20px; }
+
+  /* Composer */
+  form#composer { display: flex; gap: 8px; padding: 10px; border-top: 1px solid #1f2a44; background: #101828; }
+  #composer input { flex: 1; padding: 12px 14px; border-radius: 22px; border: 1px solid #1f2a44; background: #0b1220; outline: none; min-width: 0; }
+  #composer button { padding: 0 18px; border-radius: 22px; border: 0; background: #3b82f6; color: white; font-weight: 600; }
+
+  .back { display: inline-flex; }
+  @media (min-width: 700px) { .back { display: none; } }
+
+  #me { display: flex; align-items: center; gap: 10px; padding: 12px; border-bottom: 1px solid #1f2a44; }
+  #me .av { width: 40px; height: 40px; border-radius: 50%; background: #3b82f6; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN / REGISTER ============ -->
+<div id="auth">
+  <h1>EKK CHAT</h1>
+  <div id="authFields"></div>
+  <div class="err" id="authErr"></div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app">
+  <header>
+    <button class="back" id="backBtn" style="display:none">←</button>
+    <div class="title" id="headTitle">EKK CHAT</div>
+    <button id="logoutBtn">Keluar</button>
+  </header>
+  <div id="body">
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <div id="me">
+        <div class="av" id="meAv">?</div>
+        <div>
+          <div id="meName" style="font-weight:600"></div>
+          <div id="meUser" style="font-size:12px;color:#98a2b3"></div>
+        </div>
+      </div>
+      <div class="search">
+        <input id="userSearch" placeholder="Cari user..." />
+      </div>
+      <div id="userList"></div>
+    </div>
+
+    <!-- Chat -->
+    <div id="chat">
+      <div id="messages"></div>
+      <div id="typing"></div>
+      <form id="composer">
+        <input id="msgInput" placeholder="Ketik pesan..." autocomplete="off" />
+        <button type="submit">Kirim</button>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+// ====================== STATE ======================
+let me = null;
+let socket = null;
+let currentChat = null; // { id, username, display_name }
+let typingTimeout = null;
+let lastTypingSent = 0;
+
+// ====================== DOM ======================
+const $ = (id) => document.getElementById(id);
+const authEl = $('auth');
+const authFields = $('authFields');
+const authErr = $('authErr');
+const appEl = $('app');
+const userList = $('userList');
+const userSearch = $('userSearch');
+const messagesEl = $('messages');
+const msgInput = $('msgInput');
+const composer = $('composer');
+const chatEl = $('chat');
+const sidebarEl = $('sidebar');
+const backBtn = $('backBtn');
+const headTitle = $('headTitle');
+const typingEl = $('typing');
+
+// ====================== AUTH UI ======================
+let mode = 'login';
+
+function renderAuth() {
+  authErr.textContent = '';
+  if (mode === 'login') {
+    authFields.innerHTML = `
+      <input id="a_user" placeholder="Username" autocapitalize="none" autocorrect="off" />
+      <input id="a_pass" type="password" placeholder="Password" />
+      <button id="a_go">Masuk</button>
+      <button class="link" id="a_switch">Belum punya akun? Daftar</button>
+    `;
+  } else {
+    authFields.innerHTML = `
+      <input id="a_name" placeholder="Nama tampilan" />
+      <input id="a_user" placeholder="Username (huruf kecil, tanpa spasi)" autocapitalize="none" autocorrect="off" />
+      <input id="a_pass" type="password" placeholder="Password (min 6 karakter)" />
+      <button id="a_go">Daftar</button>
+      <button class="link" id="a_switch">Sudah punya akun? Masuk</button>
+    `;
+  }
+  $('a_switch').onclick = () => { mode = mode === 'login' ? 'register' : 'login'; renderAuth(); };
+  $('a_go').onclick = submitAuth;
+}
+
+async function submitAuth() {
+  authErr.textContent = '';
+  const username = $('a_user').value.trim().toLowerCase();
+  const password = $('a_pass').value;
+  const displayName = mode === 'register' ? $('a_name').value.trim() : null;
+
+  if (!username || !password) { authErr.textContent = 'Isi semua dulu ya'; return; }
+  if (mode === 'register' && !displayName) { authErr.textContent = 'Isi nama tampilan'; return; }
+
+  const url = mode === 'login' ? '/api/login' : '/api/register';
+  const body = mode === 'login'
+    ? { username, password }
+    : { username, password, displayName };
+
+  try {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(body),
+    });
+    const data = await r.json();
+    if (!r.ok) { authErr.textContent = mapErr(data.error); return; }
+    me = data.user;
+    showApp();
+  } catch (e) {
+    authErr.textContent = 'Koneksi gagal';
+  }
+}
+
+function mapErr(code) {
+  return ({
+    missing_field: 'Isi semua dulu',
+    too_short: 'Username min 3, password min 6',
+    username_taken: 'Username sudah dipakai',
+    invalid: 'Username atau password salah',
+  })[code] || 'Terjadi kesalahan';
+}
+
+// ====================== APP ======================
+async function tryAutoLogin() {
+  try {
+    const r = await fetch('/api/me', { credentials: 'include' });
+    if (r.ok) {
+      const data = await r.json();
+      me = data.user;
+      showApp();
+    } else renderAuth();
+  } catch { renderAuth(); }
+}
+
+function showApp() {
+  authEl.style.display = 'none';
+  appEl.style.display = 'flex';
+  $('meName').textContent = me.display_name;
+  $('meUser').textContent = '@' + me.username;
+  $('meAv').textContent = (me.display_name[0] || '?').toUpperCase();
+  headTitle.textContent = 'EKK CHAT';
+  connectSocket();
+  loadUsers();
+}
+
+function showAuth() {
+  appEl.style.display = 'none';
+  authEl.style.display = 'flex';
+  if (socket) { socket.disconnect(); socket = null; }
+  me = null; currentChat = null;
+  messagesEl.innerHTML = '';
+  mode = 'login';
+  renderAuth();
+}
+
+// ====================== SOCKET ======================
+function connectSocket() {
+  socket = io({ withCredentials: true });
+
+  socket.on('connect_error', (e) => {
+    console.error('socket error', e.message);
+  });
+
+  socket.on('message:new', (msg) => {
+    if (!currentChat) return;
+    const isWithCurrent =
+      (msg.sender_id === me.id && msg.recipient_id === currentChat.id) ||
+      (msg.sender_id === currentChat.id && msg.recipient_id === me.id);
+    if (isWithCurrent) appendMessage(msg);
+  });
+
+  socket.on('typing', ({ from, isTyping }) => {
+    if (!currentChat || from !== currentChat.id) return;
+    if (isTyping) {
+      typingEl.textContent = currentChat.display_name + ' sedang mengetik…';
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => { typingEl.textContent = ''; }, 3000);
+    } else {
+      typingEl.textContent = '';
+    }
+  });
+}
+
+// ====================== USERS ======================
+let searchTimer = null;
+function loadUsers() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(async () => {
+    const q = userSearch.value.trim();
+    const r = await fetch('/api/users?q=' + encodeURIComponent(q), { credentials: 'include' });
+    const data = await r.json();
+    userList.innerHTML = '';
+    if (!data.users.length) {
+      userList.innerHTML = '<div style="padding:20px;text-align:center;color:#98a2b3;font-size:14px">Belum ada user lain</div>';
+      return;
+    }
+    data.users.forEach(u => {
+      const div = document.createElement('div');
+      div.className = 'userRow';
+      div.innerHTML = `
+        <div class="av">${(u.display_name[0] || '?').toUpperCase()}</div>
+        <div class="info">
+          <div class="n">${escHtml(u.display_name)}</div>
+          <div class="u">@${escHtml(u.username)}</div>
+        </div>
+      `;
+      div.onclick = () => openChat(u);
+      userList.appendChild(div);
+    });
+  }, 250);
+}
+
+userSearch.addEventListener('input', loadUsers);
+
+// ====================== CHAT ======================
+async function openChat(user) {
+  currentChat = user;
+  headTitle.textContent = user.display_name;
+  sidebarEl.classList.add('hidden');
+  chatEl.classList.add('active');
+  backBtn.style.display = 'inline-flex';
+  typingEl.textContent = '';
+
+  messagesEl.innerHTML = '<div style="text-align:center;color:#98a2b3;font-size:13px;padding:10px">Memuat…</div>';
+  try {
+    const r = await fetch('/api/messages/' + user.id, { credentials: 'include' });
+    const data = await r.json();
+    messagesEl.innerHTML = '';
+    data.messages.forEach(appendMessage);
+    scrollBottom();
+  } catch { messagesEl.innerHTML = ''; }
+  msgInput.focus();
+}
+
+function closeChat() {
+  currentChat = null;
+  chatEl.classList.remove('active');
+  sidebarEl.classList.remove('hidden');
+  backBtn.style.display = 'none';
+  headTitle.textContent = 'EKK CHAT';
+}
+
+backBtn.onclick = closeChat;
+
+function appendMessage(msg) {
+  const mine = msg.sender_id === me.id;
+  const div = document.createElement('div');
+  div.className = 'msg ' + (mine ? 'me' : 'them');
+  const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  div.innerHTML = `${escHtml(msg.content)}<div class="time">${time}</div>`;
+  messagesEl.appendChild(div);
+  scrollBottom();
+}
+
+function scrollBottom() {
+  requestAnimationFrame(() => {
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  });
+}
+
+function escHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[c]);
+}
+
+// ====================== COMPOSER ======================
+composer.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const text = msgInput.value.trim();
+  if (!text || !currentChat || !socket) return;
+  socket.emit('message:send', { to: currentChat.id, content: text });
+  msgInput.value = '';
+  msgInput.focus();
+});
+
+msgInput.addEventListener('input', () => {
+  if (!socket || !currentChat) return;
+  const now = Date.now();
+  if (now - lastTypingSent > 1500) {
+    socket.emit('typing', { to: currentChat.id, isTyping: true });
+    lastTypingSent = now;
+    setTimeout(() => {
+      if (socket && currentChat) socket.emit('typing', { to: currentChat.id, isTyping: false });
+    }, 2500);
+  }
+});
+
+// ====================== LOGOUT ======================
+$('logoutBtn').onclick = async () => {
+  await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+  showAuth();
+};
+
+// ====================== BOOT ======================
+renderAuth();
+tryAutoLogin();
+</script>
+</body>
+</html>
