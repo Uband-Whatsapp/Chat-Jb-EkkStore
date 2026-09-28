@@ -7,15 +7,14 @@
 <title>EKK CHAT</title>
 <style>
 :root{
-  --brand:#00A884;--bg:#0B141A;--panel:#111B21;--panel-2:#202C33;
+  --brand:#00A884;--bg:#0B141A;--panel:#111B21;--panel-2:#202C33;--panel-3:#2A3942;
   --text:#E9EDEF;--text-2:#8696A0;--border:#222D34;
-  --bubble-out:#005C4B;--bubble-in:#202C33;
-  --overlay:rgba(0,0,0,.55);
+  --bubble-out:#005C4B;--bubble-in:#202C33;--overlay:rgba(0,0,0,.6);
 }
 [data-theme="light"]{
-  --bg:#EFEAE2;--panel:#FFFFFF;--panel-2:#F0F2F5;
+  --bg:#EFEAE2;--panel:#FFFFFF;--panel-2:#F0F2F5;--panel-3:#E9EDEF;
   --text:#111B21;--text-2:#667781;--border:#E9EDEF;
-  --bubble-out:#D9FDD3;--bubble-in:#FFFFFF;--overlay:rgba(0,0,0,.35);
+  --bubble-out:#D9FDD3;--bubble-in:#FFFFFF;--overlay:rgba(0,0,0,.4);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none}
@@ -26,7 +25,8 @@ button{cursor:pointer;border:0;background:none;padding:0}
 img{max-width:100%;display:block}
 .hidden{display:none!important}
 .ico{width:24px;height:24px;display:inline-block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-.ico-fill{fill:currentColor;stroke:none}
+.ico.sm{width:20px;height:20px}
+.ico.xs{width:16px;height:16px}
 
 /* AUTH */
 #auth{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -45,130 +45,190 @@ img{max-width:100%;display:block}
 #app{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--bg)}
 .tab-view{flex:1;display:none;flex-direction:column;min-height:0;overflow:hidden}
 .tab-view.active{display:flex}
-.app-header{background:var(--panel);padding:12px 16px;display:flex;align-items:center;gap:12px;
+.app-header{background:var(--panel);padding:12px 12px 12px 16px;display:flex;align-items:center;gap:4px;
   border-bottom:1px solid var(--border);flex-shrink:0}
-.app-header .title{font-size:20px;font-weight:600;color:var(--brand);flex:1;letter-spacing:-.3px}
-.icon-btn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-2)}
+.app-header .title{font-size:21px;font-weight:600;color:var(--text);flex:1;letter-spacing:-.3px}
+.app-header .title.green{color:var(--brand)}
+.icon-btn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-2);flex-shrink:0}
 .icon-btn:active{background:var(--panel-2)}
-.icon-btn.brand{background:var(--brand);color:#fff}
+.icon-btn.brand{background:var(--brand);color:#fff;box-shadow:0 2px 6px rgba(0,168,132,.4)}
+.icon-btn.brand:active{transform:scale(.93)}
+.icon-btn.dark{color:var(--text)}
+
+/* SEARCH */
 .search-wrap{padding:8px 12px;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0}
 .search-bar{background:var(--panel-2);border-radius:10px;padding:9px 14px;display:flex;align-items:center;gap:10px;color:var(--text-2);font-size:14px}
-.search-bar input{flex:1;background:none;border:0;color:var(--text);font-size:14px;min-width:0}
+.search-bar input{flex:1;background:none;border:0;color:var(--text);font-size:15px;min-width:0}
 .search-bar input::placeholder{color:var(--text-2)}
+
+/* FILTER CHIPS */
+.chips{display:flex;gap:8px;padding:8px 12px;background:var(--panel);border-bottom:1px solid var(--border);
+  overflow-x:auto;flex-shrink:0;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{padding:6px 14px;border-radius:16px;background:var(--panel-2);color:var(--text-2);
+  font-size:13.5px;white-space:nowrap;font-weight:500;border:0;flex-shrink:0}
+.chip.on{background:rgba(0,168,132,.2);color:var(--brand)}
+
+/* LIST */
 .list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--panel)}
 .list::-webkit-scrollbar{width:0}
 .row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border);position:relative;cursor:pointer}
 .row:active{background:var(--panel-2)}
-.av{width:50px;height:50px;border-radius:50%;flex-shrink:0;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;overflow:hidden;position:relative}
+.av{width:50px;height:50px;border-radius:50%;flex-shrink:0;background:var(--brand);color:#fff;display:flex;
+  align-items:center;justify-content:center;font-weight:600;font-size:19px;overflow:hidden;position:relative}
 .av img{width:100%;height:100%;object-fit:cover}
-.av.sm{width:40px;height:40px;font-size:15px}
+.av.sm{width:40px;height:40px;font-size:16px}
+.av.xs{width:28px;height:28px;font-size:12px}
+.av.lg{width:120px;height:120px;font-size:48px}
 .body{flex:1;min-width:0}
 .line1{display:flex;align-items:center;gap:8px;margin-bottom:3px}
 .name{font-weight:500;font-size:16px;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.time{font-size:12px;color:var(--text-2);flex-shrink:0}
-.time.unread{color:var(--brand)}
+.time{font-size:12px;color:var(--text-2);flex-shrink:0;display:flex;align-items:center;gap:3px}
+.time.unread{color:var(--brand);font-weight:600}
 .line2{display:flex;align-items:center;gap:6px}
-.preview{flex:1;font-size:14px;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:5px}
-.badge{background:var(--brand);color:#fff;border-radius:11px;min-width:22px;height:22px;padding:0 7px;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.online-dot{position:absolute;bottom:1px;right:1px;width:13px;height:13px;border-radius:50%;background:#31A24C;border:2.5px solid var(--panel)}
+.preview{flex:1;font-size:14px;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;display:flex;align-items:center;gap:5px;min-width:0}
+.preview .ico{color:var(--text-2)}
+.badge{background:var(--brand);color:#fff;border-radius:11px;min-width:22px;height:22px;padding:0 7px;
+  font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.online-dot{position:absolute;bottom:1px;right:1px;width:13px;height:13px;border-radius:50%;
+  background:#31A24C;border:2.5px solid var(--panel)}
+.icon-mini{color:var(--text-2);flex-shrink:0}
+.row-icons{display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex-shrink:0}
+.archived-row{padding:14px;display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--border);cursor:pointer}
+.archived-row .ico{width:22px;height:22px;color:var(--text-2)}
+.archived-row .label{flex:1;font-size:15px;font-weight:500}
+.archived-row .count{font-size:14px;color:var(--text-2)}
 .empty{padding:60px 30px;text-align:center;color:var(--text-2);font-size:14px}
-.empty .ico{width:52px;height:52px;stroke-width:1.5;margin-bottom:14px;opacity:.5}
+.empty .ico{width:52px;height:52px;stroke-width:1.5;margin-bottom:14px;opacity:.4}
+.section-title{padding:14px 16px 6px;font-size:13.5px;color:var(--brand);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
 
 /* NAV */
 .nav{background:var(--panel);border-top:1px solid var(--border);display:flex;
   padding:6px 0 calc(6px + env(safe-area-inset-bottom)) 0;flex-shrink:0}
 .nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
-  padding:6px 4px;color:var(--text-2);font-size:11px;font-weight:500;position:relative}
+  padding:6px 4px;color:var(--text-2);font-size:11.5px;font-weight:500;position:relative}
 .nav button.active{color:var(--brand)}
-.nav button .ico{width:22px;height:22px}
-.nav button.active .ico{stroke-width:2.4}
-.nav-badge{position:absolute;top:-2px;right:calc(50% - 22px);background:var(--brand);color:#fff;
+.nav button .ico{width:24px;height:24px}
+.nav-badge{position:absolute;top:-2px;right:calc(50% - 24px);background:var(--brand);color:#fff;
   font-size:10px;font-weight:700;border-radius:9px;min-width:16px;height:16px;padding:0 4px;
   display:flex;align-items:center;justify-content:center}
+.nav-badge.hidden{display:none}
 
 /* CONVO */
 #convo{position:fixed;inset:0;background:var(--bg);z-index:100;display:none;flex-direction:column}
 #convo.open{display:flex}
 #convo::before{content:"";position:absolute;inset:0;background-image:
-  repeating-linear-gradient(45deg,rgba(255,255,255,.015) 0 2px,transparent 2px 20px);
-  pointer-events:none;z-index:-1}
-.convo-header{background:var(--panel);padding:8px 10px;display:flex;align-items:center;gap:10px;flex-shrink:0;border-bottom:1px solid var(--border);z-index:2}
+  repeating-linear-gradient(45deg,rgba(255,255,255,.02) 0 2px,transparent 2px 24px);
+  pointer-events:none;z-index:0}
+.convo-header{background:var(--panel);padding:8px 8px;display:flex;align-items:center;gap:6px;
+  flex-shrink:0;border-bottom:1px solid var(--border);z-index:2;position:relative}
 .convo-header .back{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text)}
 .convo-header .back:active{background:var(--panel-2)}
-.convo-header .info{flex:1;min-width:0}
-.convo-header .n{font-weight:600;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.convo-header .s{font-size:12px;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;height:16px}
-#messages{flex:1;overflow-y:auto;padding:12px 8px 8px;-webkit-overflow-scrolling:touch;z-index:1}
+.convo-header .hd-info{flex:1;min-width:0;display:flex;align-items:center;gap:10px;cursor:pointer;padding:4px;border-radius:8px}
+.convo-header .hd-info:active{background:var(--panel-2)}
+.convo-header .n{font-weight:500;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.convo-header .s{font-size:12.5px;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#messages{flex:1;overflow-y:auto;padding:10px 8px 6px;z-index:1;position:relative}
 #messages::-webkit-scrollbar{width:0}
-.msg{max-width:82%;margin-bottom:6px;display:flex;flex-direction:column;position:relative}
+.day-divider{text-align:center;margin:10px 0}
+.day-divider span{background:var(--panel-2);color:var(--text-2);padding:4px 12px;border-radius:12px;font-size:12px}
+.msg{max-width:82%;margin-bottom:4px;display:flex;flex-direction:column;position:relative}
 .msg.me{align-items:flex-end;margin-left:auto}
-.bubble{padding:7px 10px 6px;border-radius:8px;position:relative;word-wrap:break-word;overflow-wrap:break-word;
+.bubble{padding:6px 9px 5px;border-radius:8px;position:relative;word-wrap:break-word;overflow-wrap:break-word;
   font-size:15px;line-height:1.35;box-shadow:0 1px 1px rgba(0,0,0,.15);animation:msgIn .18s ease-out;max-width:100%}
 .msg.them .bubble{background:var(--bubble-in);border-top-left-radius:2px;color:var(--text)}
 .msg.me .bubble{background:var(--bubble-out);border-top-right-radius:2px}
 @keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .bubble .content{white-space:pre-wrap;word-break:break-word}
-.bubble .attach-img{max-width:260px;max-height:280px;border-radius:6px;margin:-2px -2px 4px;display:block;cursor:pointer}
-.bubble .attach-file{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.15);padding:10px;border-radius:6px;margin:-2px -2px 4px;min-width:200px}
+.bubble .attach-img{max-width:280px;max-height:280px;border-radius:6px;margin:-2px -2px 4px;display:block;cursor:pointer}
+.bubble .attach-file{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.15);padding:10px;border-radius:6px;margin:-2px -2px 4px;min-width:200px;text-decoration:none;color:inherit}
 .bubble .attach-file .fico{width:36px;height:36px;border-radius:6px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.bubble .attach-file .fname{font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bubble .attach-file .fsize{font-size:11px;opacity:.7}
+.bubble .attach-file .fname{font-size:13.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bubble .attach-file .fsize{font-size:11.5px;opacity:.7}
 .bubble .reply-preview{border-left:3px solid var(--brand);padding:5px 8px;background:rgba(0,0,0,.15);border-radius:4px;margin:-2px -2px 4px;font-size:13px;max-width:100%;overflow:hidden}
 .bubble .reply-preview .rp-name{font-weight:600;color:var(--brand);margin-bottom:2px}
 .bubble .reply-preview .rp-text{opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bubble .meta{display:flex;align-items:center;gap:4px;justify-content:flex-end;margin-top:2px;font-size:11px;color:var(--text-2)}
+.bubble .meta{display:flex;align-items:center;gap:4px;justify-content:flex-end;margin-top:1px;font-size:11px;color:var(--text-2)}
 .msg.me .bubble .meta{color:rgba(233,237,239,.7)}
 [data-theme="light"] .msg.me .bubble .meta{color:#667781}
-.bubble .check{display:inline-flex;align-items:center}
-.bubble .check .ico{width:15px;height:15px;stroke-width:2.5;color:#53BDEB}
-.bubble.deleted{opacity:.6;font-style:italic}
-.msg.sender-name{font-size:12.5px;font-weight:600;padding:0 12px 2px;margin-top:-2px}
+.bubble .check{display:inline-flex;align-items:center;color:#53BDEB}
+.bubble .check .ico{width:15px;height:15px;stroke-width:2.5}
+.bubble.deleted{opacity:.7;font-style:italic}
+.sender-name{font-size:12.5px;font-weight:600;padding:0 10px 2px;margin-top:0}
+.star-badge{position:absolute;top:-4px;right:-4px;background:var(--panel);border-radius:50%;padding:2px;color:#F5C33B;box-shadow:0 1px 3px rgba(0,0,0,.3)}
 
 /* COMPOSER */
 .composer{background:var(--panel);padding:6px 8px calc(6px + env(safe-area-inset-bottom)) 8px;
-  display:flex;align-items:flex-end;gap:4px;flex-shrink:0;z-index:2}
+  display:flex;align-items:flex-end;gap:3px;flex-shrink:0;z-index:2}
 .composer .icon-btn{width:40px;height:40px}
-.input-wrap{flex:1;background:var(--panel-2);border-radius:22px;padding:6px 6px 6px 14px;display:flex;align-items:flex-end;gap:4px}
+.input-wrap{flex:1;background:var(--panel-2);border-radius:22px;padding:6px 6px 6px 14px;
+  display:flex;align-items:flex-end;gap:2px;min-width:0}
 .composer textarea{flex:1;background:none;border:0;padding:6px 0;resize:none;max-height:120px;
-  font-size:15px;color:var(--text);line-height:1.35;min-height:24px;font-family:inherit}
+  font-size:15px;color:var(--text);line-height:1.35;min-height:24px;font-family:inherit;min-width:0}
 .composer textarea::placeholder{color:var(--text-2)}
-.send-btn{background:var(--brand);color:#fff;width:42px;height:42px;border-radius:50%;display:flex;
+.send-btn{background:var(--brand);color:#fff;width:44px;height:44px;border-radius:50%;display:flex;
   align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 6px rgba(0,168,132,.4)}
 .send-btn:active{transform:scale(.93)}
 .send-btn .ico{width:20px;height:20px}
 
 /* REPLY BAR */
-.reply-bar{background:var(--panel-2);padding:8px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);flex-shrink:0}
+.reply-bar{background:var(--panel-2);padding:8px 12px;display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border);flex-shrink:0}
 .reply-bar .rb-line{width:3px;height:34px;background:var(--brand);border-radius:2px;flex-shrink:0}
 .reply-bar .rb-body{flex:1;min-width:0;font-size:13px}
 .reply-bar .rb-name{color:var(--brand);font-weight:600;margin-bottom:2px}
 .reply-bar .rb-text{color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-/* RING */
-.my-status{display:flex;align-items:center;gap:12px;padding:14px}
-.my-status .av{width:50px;height:50px;background:var(--panel-2);color:var(--text-2)}
-.my-status .plus{position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;border:2px solid var(--panel)}
-.my-status .plus .ico{width:12px;height:12px;stroke-width:3}
-.section-title{padding:12px 16px 4px;font-size:13px;color:var(--brand);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
-.ring{width:50px;height:50px;border-radius:50%;padding:2.5px;flex-shrink:0;background:linear-gradient(45deg,#00A884,#06CF9C)}
-.ring.viewed{background:var(--text-2)}
-.ring .inner{width:100%;height:100%;border-radius:50%;background:var(--panel);padding:2px;display:flex}
-.ring .inner .av{width:100%;height:100%}
+/* INFO PAGE (Contact / Group) */
+#infoPage{position:fixed;inset:0;background:var(--bg);z-index:150;display:none;flex-direction:column}
+#infoPage.open{display:flex}
+.info-header{background:var(--panel);padding:10px 8px;display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid var(--border);flex-shrink:0}
+.info-header .title{flex:1;font-size:17px;font-weight:500}
+.info-scroll{flex:1;overflow-y:auto;background:var(--panel-2)}
+.info-section{background:var(--panel);margin-bottom:8px;padding:16px}
+.info-profile{text-align:center;padding:24px 16px}
+.info-profile .av{margin:0 auto 14px}
+.info-profile .n{font-size:22px;font-weight:500;margin-bottom:4px;color:var(--text)}
+.info-profile .about{font-size:14.5px;color:var(--text-2);margin-bottom:18px}
+.info-actions{display:flex;gap:12px;justify-content:center;margin-top:6px}
+.info-actions .act{background:var(--panel-2);border-radius:22px;padding:9px 18px;display:flex;
+  align-items:center;gap:8px;color:var(--brand);font-size:14.5px;font-weight:500}
+.info-actions .act:active{background:var(--panel-3)}
+.info-actions .act .ico{width:20px;height:20px}
+.info-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.info-row:last-child{border-bottom:0}
+.info-row .ico{color:var(--text-2);flex-shrink:0}
+.info-row .lbl{flex:1;font-size:15.5px}
+.info-row .val{color:var(--text-2);font-size:14.5px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.info-row.danger .lbl,.info-row.danger .ico{color:#F87171}
+.info-media-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;border-radius:8px;overflow:hidden}
+.info-media-grid .mi{aspect-ratio:1;background:var(--panel-2);overflow:hidden;cursor:pointer}
+.info-media-grid .mi img{width:100%;height:100%;object-fit:cover}
+.info-media-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;cursor:pointer}
+.info-media-title .t{font-size:15px;color:var(--text-2)}
+.info-media-title .n{font-size:13.5px;color:var(--brand)}
+
+/* MEMBERS */
+.member-row{display:flex;align-items:center;gap:12px;padding:8px 0;cursor:pointer}
+.member-row .role{color:var(--brand);font-size:11.5px;font-weight:600;border:1px solid var(--brand);
+  padding:1px 6px;border-radius:4px;margin-left:auto;flex-shrink:0}
 
 /* SETTINGS */
-.settings-profile{display:flex;align-items:center;gap:14px;padding:18px 16px;border-bottom:1px solid var(--border);cursor:pointer}
+.settings-profile{display:flex;align-items:center;gap:14px;padding:18px 16px;border-bottom:1px solid var(--border);cursor:pointer;background:var(--panel)}
 .settings-profile:active{background:var(--panel-2)}
-.settings-profile .av{width:64px;height:64px;font-size:24px}
 .settings-profile .info{flex:1;min-width:0}
 .settings-profile .n{font-size:19px;font-weight:500;margin-bottom:2px}
 .settings-profile .a{font-size:14px;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.settings-section{padding:8px 0;border-bottom:8px solid var(--panel-2)}
-.setting-row{display:flex;align-items:center;gap:14px;padding:13px 16px;cursor:pointer}
+.settings-section{padding:4px 0;border-bottom:8px solid var(--panel-2);background:var(--panel)}
+.setting-row{display:flex;align-items:center;gap:18px;padding:14px 16px;cursor:pointer}
 .setting-row:active{background:var(--panel-2)}
-.setting-row .ico{color:var(--text-2)}
-.setting-row .label{flex:1;font-size:16px}
-.setting-row .value{font-size:14px;color:var(--text-2);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.setting-row.danger .label{color:#F87171}
+.setting-row .ico{color:var(--text-2);width:24px;height:24px;flex-shrink:0}
+.setting-row .lbl{flex:1;font-size:15.5px}
+.setting-row .val{font-size:14.5px;color:var(--text-2);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.setting-row.danger .lbl{color:#F87171}
+.setting-row.danger .ico{color:#F87171}
 
 /* SHEET */
 .sheet-backdrop{position:fixed;inset:0;background:var(--overlay);z-index:200;display:none;align-items:flex-end;justify-content:center}
@@ -184,19 +244,20 @@ img{max-width:100%;display:block}
 .sheet .btn-ghost{background:var(--panel-2);color:var(--text);margin-top:8px}
 .sheet .menu-row{display:flex;align-items:center;gap:14px;padding:12px 8px;cursor:pointer;border-radius:8px}
 .sheet .menu-row:active{background:var(--panel-2)}
+.sheet .menu-row .ico{color:var(--text-2)}
 .sheet .menu-row.danger{color:#F87171}
+.sheet .menu-row.danger .ico{color:#F87171}
 .sheet .color-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
-.sheet .color-dot{width:36px;height:36px;border-radius:50%;cursor:pointer;border:3px solid transparent}
-.sheet .color-dot.on{border-color:#fff}
+.sheet .color-dot{width:38px;height:38px;border-radius:50%;cursor:pointer;border:3px solid transparent;flex-shrink:0}
+.sheet .color-dot.on{border-color:#fff;box-shadow:0 0 0 2px var(--panel-2)}
 .sheet .user-pick{display:flex;align-items:center;gap:12px;padding:10px 8px;cursor:pointer;border-radius:8px}
 .sheet .user-pick:active{background:var(--panel-2)}
 .sheet .user-pick.on{background:rgba(0,168,132,.12)}
-.sheet .cb{width:22px;height:22px;border-radius:50%;border:2px solid var(--text-2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sheet .cb{width:22px;height:22px;border-radius:50%;border:2px solid var(--text-2);display:flex;
+  align-items:center;justify-content:center;flex-shrink:0}
 .sheet .user-pick.on .cb{background:var(--brand);border-color:var(--brand)}
 .sheet .user-pick.on .cb .ico{width:14px;height:14px;color:#fff;stroke-width:3}
-
-/* EMOJI PICKER */
-.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-bottom:14px}
+.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin-bottom:14px}
 .emoji-grid button{font-size:24px;padding:6px;border-radius:8px;text-align:center;line-height:1}
 .emoji-grid button:active{background:var(--panel-2)}
 
@@ -208,13 +269,15 @@ img{max-width:100%;display:block}
 .status-progress .bar .fill{height:100%;width:0%;background:#fff}
 .status-progress .bar.done .fill{width:100%}
 .status-header{display:flex;align-items:center;gap:12px;padding:12px 16px;color:#fff;flex-shrink:0}
-.status-header .av{width:40px;height:40px}
 .status-header .meta{flex:1;min-width:0}
 .status-header .n{font-weight:600;font-size:15px}
 .status-header .t{font-size:12px;opacity:.7}
 .status-header .x{width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#fff}
 .status-body{flex:1;display:flex;align-items:center;justify-content:center;padding:40px;text-align:center;
   color:#fff;font-size:26px;font-weight:600;line-height:1.3;word-break:break-word}
+.status-nav{position:absolute;top:0;bottom:0;width:30%;z-index:10}
+.status-nav.left{left:0}
+.status-nav.right{right:0;width:70%}
 
 /* TOAST */
 #toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);
@@ -222,25 +285,41 @@ img{max-width:100%;display:block}
   transition:opacity .25s;pointer-events:none;max-width:90%;text-align:center}
 #toast.on{opacity:1}
 
-/* IMAGE FULLSCREEN */
+/* IMG FULLSCREEN */
 #imgView{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
 #imgView.open{display:flex}
 #imgView img{max-width:100%;max-height:100%;object-fit:contain}
+#imgView .close-btn{position:absolute;top:16px;right:16px;color:#fff;background:rgba(0,0,0,.5);
+  width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+
+/* CALL SCREEN */
+#callScreen{position:fixed;inset:0;background:#0b141a;z-index:400;display:none;flex-direction:column;
+  align-items:center;justify-content:space-between;padding:40px 20px;color:#fff;text-align:center}
+#callScreen.open{display:flex}
+#callScreen .av-call{width:120px;height:120px;border-radius:50%;background:var(--brand);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:600;overflow:hidden;margin:60px auto 24px}
+#callScreen .av-call img{width:100%;height:100%;object-fit:cover}
+#callScreen .cname{font-size:24px;font-weight:500;margin-bottom:8px}
+#callScreen .cstatus{font-size:15px;color:#8696A0;margin-bottom:30px}
+#callScreen .ctrls{display:flex;gap:20px;justify-content:center;margin-bottom:30px}
+#callScreen .ctrl{width:60px;height:60px;border-radius:50%;background:#2A3942;display:flex;
+  align-items:center;justify-content:center;color:#fff}
+#callScreen .ctrl.end{background:#F15C6D}
 
 @media(min-width:768px){
   #app{max-width:600px;margin:0 auto;border-left:1px solid var(--border);border-right:1px solid var(--border)}
-  #convo{max-width:600px;left:50%;transform:translateX(-50%)}
+  #convo,#infoPage{max-width:600px;left:50%;transform:translateX(-50%)}
 }
 </style>
 </head>
 <body>
 
-<!-- SVG ICON SPRITE -->
+<!-- SVG SPRITE -->
 <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
   <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></symbol>
-  <symbol id="i-status" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-status" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-dasharray="4 2"/><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></symbol>
   <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
-  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></symbol>
   <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
@@ -249,6 +328,7 @@ img{max-width:100%;display:block}
   <symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></symbol>
   <symbol id="i-attach" viewBox="0 0 24 24"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></symbol>
   <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></symbol>
   <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
   <symbol id="i-check-2" viewBox="0 0 24 24"><path d="m2 12 5 5L18 6"/><path d="m12 17 8-8"/></symbol>
@@ -259,13 +339,38 @@ img{max-width:100%;display:block}
   <symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
   <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></symbol>
+  <symbol id="i-bell-off" viewBox="0 0 24 24"><path d="M13.73 21a2 2 0 0 1-3.46 0"/><path d="M18.63 13A17.89 17.89 0 0 1 18 8M6.26 6.26A5.86 5.86 0 0 0 6 8c0 7-3 9-3 9h14M18 8a6 6 0 0 0-9.33-5"/><path d="m1 1 22 22"/></symbol>
   <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
   <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></symbol>
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
-  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></symbol>
   <symbol id="i-video" viewBox="0 0 24 24"><path d="m23 7-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></symbol>
+  <symbol id="i-archive" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="5" rx="1"/><path d="M4 9v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9M10 13h4"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></symbol>
+  <symbol id="i-block" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 14.14 14.14"/></symbol>
+  <symbol id="i-chev-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="i-chev-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-chev-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="7.5" cy="15.5" r="3.5"/><path d="m21 2-9.6 9.6M15.5 7.5 19 11l2-2-3.5-3.5z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.5-.7 1.5-1.5 0-.4-.15-.75-.4-1.05-.25-.3-.35-.6-.35-.95 0-.8.7-1.5 1.5-1.5H16c3.3 0 6-2.7 6-6 0-4.95-4.5-9-10-9z"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3"/></symbol>
+  <symbol id="i-dialpad" viewBox="0 0 24 24"><circle cx="12" cy="3" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="10" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="17" r="1.5" fill="currentColor" stroke="none"/><circle cx="5" cy="3" r="1.5" fill="currentColor" stroke="none"/><circle cx="5" cy="10" r="1.5" fill="currentColor" stroke="none"/><circle cx="5" cy="17" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="3" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="10" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="17" r="1.5" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-phone-in" viewBox="0 0 24 24"><path d="M16 2v6h6M22 2l-6 6" /><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+  <symbol id="i-phone-out" viewBox="0 0 24 24"><path d="M22 8V2h-6M16 8l6-6"/><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+  <symbol id="i-phone-missed" viewBox="0 0 24 24"><path d="M23 1l-6 6M17 1l6 6"/><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+  <symbol id="i-mic-off" viewBox="0 0 24 24"><path d="m2 2 20 20M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23M12 19v3"/></symbol>
+  <symbol id="i-mic-on" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4"/></symbol>
+  <symbol id="i-phone-end" viewBox="0 0 24 24"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67M5 10a16 16 0 0 1 2-3.42M2 2l20 20"/></symbol>
+  <symbol id="i-volume" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-camera-switch" viewBox="0 0 24 24"><path d="M20 5h-3l-2-3H9L7 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z"/><path d="M12 8v2M9 11h6"/></symbol>
 </svg>
 
 <!-- AUTH -->
@@ -274,8 +379,8 @@ img{max-width:100%;display:block}
   <div class="tag" id="authTag">Masuk atau daftar untuk mulai chat</div>
   <form id="authForm" autocomplete="off">
     <input id="a_name" placeholder="Nama tampilan" style="display:none">
-    <input id="a_user" placeholder="Username" autocapitalize="none" autocorrect="off" autocomplete="username">
-    <input id="a_pass" type="password" placeholder="Password (min 6 karakter)" autocomplete="current-password">
+    <input id="a_user" placeholder="Username" autocapitalize="none" autocorrect="off">
+    <input id="a_pass" type="password" placeholder="Password (min 6 karakter)">
     <div class="err" id="authErr"></div>
     <button type="submit" class="btn" id="authBtn">Masuk</button>
     <button type="button" class="switch" id="authSwitch">Belum punya akun? Daftar</button>
@@ -285,39 +390,60 @@ img{max-width:100%;display:block}
 <!-- APP -->
 <div id="app" class="hidden">
 
+  <!-- TAB: CHAT -->
   <div class="tab-view active" data-tab="chats">
     <div class="app-header">
-      <div class="title">EKK CHAT</div>
+      <div class="title green">EKK CHAT</div>
       <button class="icon-btn" onclick="openNewChatSheet()" aria-label="Cari"><svg class="ico"><use href="#i-search"/></svg></button>
-      <button class="icon-btn" onclick="openMenu()" aria-label="Menu"><svg class="ico"><use href="#i-more"/></svg></button>
+      <button class="icon-btn" onclick="openMainMenu()" aria-label="Menu"><svg class="ico"><use href="#i-more"/></svg></button>
     </div>
     <div class="search-wrap">
       <div class="search-bar">
-        <svg class="ico" style="width:18px;height:18px"><use href="#i-search"/></svg>
-        <input id="chatSearch" placeholder="Cari user">
+        <svg class="ico sm"><use href="#i-search"/></svg>
+        <input id="chatSearch" placeholder="Tanya atau cari">
       </div>
+    </div>
+    <div class="chips" id="chatChips">
+      <button class="chip on" data-f="all">Semua</button>
+      <button class="chip" data-f="unread">Belum dibaca</button>
+      <button class="chip" data-f="fav">Favorit</button>
+      <button class="chip" data-f="group">Grup</button>
     </div>
     <div class="list" id="chatsList"></div>
   </div>
 
+  <!-- TAB: UPDATES -->
   <div class="tab-view" data-tab="updates">
-    <div class="app-header"><div class="title">Pembaruan</div></div>
+    <div class="app-header">
+      <div class="title">Pembaruan</div>
+      <button class="icon-btn" onclick="openStatusSheet()" aria-label="Tambah"><svg class="ico"><use href="#i-camera"/></svg></button>
+      <button class="icon-btn" onclick="toast('Cari pembaruan')" aria-label="Cari"><svg class="ico"><use href="#i-search"/></svg></button>
+    </div>
     <div class="list" id="updatesList"></div>
   </div>
 
+  <!-- TAB: CALLS -->
   <div class="tab-view" data-tab="calls">
     <div class="app-header">
       <div class="title">Panggilan</div>
-      <button class="icon-btn" onclick="openCallPicker()" aria-label="Panggil"><svg class="ico"><use href="#i-phone"/></svg></button>
+      <button class="icon-btn" onclick="openDialPad()" aria-label="Dial"><svg class="ico"><use href="#i-dialpad"/></svg></button>
+    </div>
+    <div class="chips">
+      <button class="chip on">Semua</button>
     </div>
     <div class="list" id="callsList"></div>
   </div>
 
+  <!-- TAB: SETTINGS -->
   <div class="tab-view" data-tab="settings">
-    <div class="app-header"><div class="title">Pengaturan</div></div>
+    <div class="app-header">
+      <div class="title">Pengaturan</div>
+      <button class="icon-btn" onclick="toast('Cari pengaturan')" aria-label="Cari"><svg class="ico"><use href="#i-search"/></svg></button>
+    </div>
     <div class="list" id="settingsList"></div>
   </div>
 
+  <!-- BOTTOM NAV -->
   <div class="nav">
     <button data-tab="chats" class="active">
       <svg class="ico"><use href="#i-chat"/></svg>
@@ -343,13 +469,16 @@ img{max-width:100%;display:block}
 <div id="convo">
   <div class="convo-header">
     <button class="back" onclick="closeConvo()"><svg class="ico"><use href="#i-back"/></svg></button>
-    <div class="av sm" id="cAv">?</div>
-    <div class="info">
-      <div class="n" id="cName"></div>
-      <div class="s" id="cStatus"></div>
+    <div class="hd-info" onclick="openChatInfo()">
+      <div class="av sm" id="cAv">?</div>
+      <div style="flex:1;min-width:0">
+        <div class="n" id="cName"></div>
+        <div class="s" id="cStatus"></div>
+      </div>
     </div>
-    <button class="icon-btn" onclick="fakeCall('voice')" aria-label="Panggil suara"><svg class="ico"><use href="#i-phone"/></svg></button>
-    <button class="icon-btn" onclick="fakeCall('video')" aria-label="Panggil video"><svg class="ico"><use href="#i-video"/></svg></button>
+    <button class="icon-btn" onclick="startCall('voice')" aria-label="Panggil suara"><svg class="ico"><use href="#i-phone"/></svg></button>
+    <button class="icon-btn" onclick="startCall('video')" aria-label="Panggil video"><svg class="ico"><use href="#i-video"/></svg></button>
+    <button class="icon-btn" onclick="openChatMenu()" aria-label="Menu"><svg class="ico"><use href="#i-more"/></svg></button>
   </div>
   <div id="replyBar" class="reply-bar hidden">
     <div class="rb-line"></div>
@@ -363,53 +492,89 @@ img{max-width:100%;display:block}
   <div class="composer">
     <button class="icon-btn" onclick="openEmoji()" aria-label="Emoji"><svg class="ico"><use href="#i-smile"/></svg></button>
     <div class="input-wrap">
-      <textarea id="msgInput" rows="1" placeholder="Ketik pesan"></textarea>
-      <button class="icon-btn" onclick="openAttach()" aria-label="Lampiran"><svg class="ico"><use href="#i-attach"/></svg></button>
+      <textarea id="msgInput" rows="1" placeholder="Pesan"></textarea>
+      <button class="icon-btn" onclick="openAttach()" aria-label="Lampiran"><svg class="ico sm"><use href="#i-attach"/></svg></button>
+      <button class="icon-btn" onclick="startVoiceRec()" aria-label="Rekam"><svg class="ico sm"><use href="#i-camera"/></svg></button>
     </div>
     <button class="send-btn" id="sendBtn" aria-label="Kirim"><svg class="ico"><use href="#i-send"/></svg></button>
   </div>
 </div>
 
+<!-- INFO PAGE -->
+<div id="infoPage">
+  <div class="info-header">
+    <button class="icon-btn dark" onclick="closeInfo()"><svg class="ico"><use href="#i-back"/></svg></button>
+    <div class="title" id="infoTitle">Info</div>
+    <button class="icon-btn dark" onclick="openInfoMenu()"><svg class="ico"><use href="#i-more"/></svg></button>
+  </div>
+  <div class="info-scroll" id="infoBody"></div>
+</div>
+
+<!-- SHEET -->
 <div class="sheet-backdrop" id="sheetBackdrop" onclick="closeSheet(event)">
   <div class="sheet" id="sheet" onclick="event.stopPropagation()"></div>
 </div>
 
+<!-- STATUS VIEWER -->
 <div id="statusViewer" class="status-viewer">
   <div class="status-progress" id="statusProgress"></div>
   <div class="status-header">
-    <div class="av" id="svAv"></div>
+    <div class="av sm" id="svAv"></div>
     <div class="meta"><div class="n" id="svName"></div><div class="t" id="svTime"></div></div>
-    <button class="icon-btn" onclick="closeStatusViewer()" style="color:#fff"><svg class="ico"><use href="#i-x"/></svg></button>
+    <button class="x" onclick="closeStatusViewer()"><svg class="ico"><use href="#i-x"/></svg></button>
   </div>
-  <div class="status-body" id="svBody" onclick="nextStatus()"></div>
+  <div class="status-nav left" onclick="prevStatus()"></div>
+  <div class="status-nav right" onclick="nextStatus()"></div>
+  <div class="status-body" id="svBody"></div>
 </div>
 
-<div id="imgView" onclick="this.classList.remove('open')"><img id="imgViewImg" src=""></div>
+<!-- CALL SCREEN -->
+<div id="callScreen">
+  <div style="width:100%">
+    <div class="av-call" id="callAv">?</div>
+    <div class="cname" id="callName"></div>
+    <div class="cstatus" id="callStatus">Memanggil...</div>
+  </div>
+  <div class="ctrls">
+    <button class="ctrl" id="callMute" onclick="toast('Mic toggle (demo)')"><svg class="ico"><use href="#i-mic-on"/></svg></button>
+    <button class="ctrl" onclick="toast('Speaker (demo)')"><svg class="ico"><use href="#i-volume"/></svg></button>
+    <button class="ctrl end" onclick="endCall()"><svg class="ico"><use href="#i-phone-end"/></svg></button>
+  </div>
+</div>
+
+<div id="imgView" onclick="this.classList.remove('open')">
+  <div class="close-btn"><svg class="ico"><use href="#i-x"/></svg></div>
+  <img id="imgViewImg" src="">
+</div>
 <div id="toast"></div>
-<input type="file" id="fileInput" style="display:none">
+<input type="file" id="fileInput" style="display:none" accept="*/*">
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-// ============ STATE ============
-let me=null,socket=null,currentChat=null,typingTO=null,lastTyping=0,chatTimer=null,statusTimer=null,statusIdx=0,statusList=[],pendingReply=null;
+// =============== STATE ===============
+let me=null,socket=null,currentChat=null,typingTO=null,lastTyping=0,chatTimer=null;
+let statusTimer=null,statusIdx=0,statusList=[],pendingReply=null;
+let allChats=[],chatFilter='all',showArchived=false;
+let currentInfo=null;
 const $=id=>document.getElementById(id);
-const svgIco=(name,cls='ico')=>`<svg class="${cls}"><use href="#i-${name}"/></svg>`;
+const ICO=(name,cls='ico')=>`<svg class="${cls}"><use href="#i-${name}"/></svg>`;
 
-function toast(m,d=2200){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),d);}
-function escapeHtml(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function toast(m,d=2400){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),d);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function formatTime(iso){if(!iso)return'';const d=new Date(iso),n=new Date();
   if(d.toDateString()===n.toDateString())return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   const df=(n-d)/86400000;if(df<1)return'Kemarin';
   if(df<7)return d.toLocaleDateString([],{weekday:'short'});
   return d.toLocaleDateString([],{day:'2-digit',month:'2-digit',year:'2-digit'});}
-function avatarHtml(u,cls='av'){
+function avHtml(u,cls='av'){
   if(!u)return `<div class="${cls}">?</div>`;
   const init=(u.display_name||'?')[0].toUpperCase();
-  const src=u.avatar_url?`<img src="${escapeHtml(u.avatar_url)}" alt="">`:init;
+  const src=u.avatar_url?`<img src="${esc(u.avatar_url)}" alt="">`:init;
   return `<div class="${cls}">${src}</div>`;
 }
+function fmtSize(b){if(!b)return'';if(b<1024)return b+' B';if(b<1048576)return (b/1024).toFixed(1)+' KB';return (b/1048576).toFixed(1)+' MB';}
 
-// ============ AUTH ============
+// =============== AUTH ===============
 let authMode='login';
 function setAuthMode(m){authMode=m;const r=m==='register';
   $('a_name').style.display=r?'block':'none';
@@ -436,7 +601,7 @@ $('authForm').onsubmit=async e=>{
 };
 function mapErr(c){return({missing_field:'Isi semua',too_short:'Username min 3, password min 6',username_taken:'Username sudah dipakai',invalid:'Username atau password salah',db_error:'Server bermasalah'})[c]||'Terjadi kesalahan';}
 
-// ============ BOOT ============
+// =============== BOOT ===============
 async function tryAutoLogin(){try{const r=await fetch('/api/me',{credentials:'include'});if(r.ok){const d=await r.json();me=d.user;startApp();return;}}catch{}$('auth').classList.remove('hidden');}
 function startApp(){
   $('auth').classList.add('hidden');$('app').classList.remove('hidden');
@@ -444,7 +609,7 @@ function startApp(){
   setInterval(()=>{if(socket)socket.emit('heartbeat');},30000);
 }
 
-// ============ NAV ============
+// =============== NAV ===============
 document.querySelectorAll('.nav button').forEach(b=>{
   b.onclick=()=>{
     document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));
@@ -457,128 +622,173 @@ document.querySelectorAll('.nav button').forEach(b=>{
   };
 });
 
-// ============ SOCKET ============
+// CHAT FILTER CHIPS
+document.querySelectorAll('#chatChips .chip').forEach(c=>{
+  c.onclick=()=>{
+    document.querySelectorAll('#chatChips .chip').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on');chatFilter=c.dataset.f;renderChats();
+  };
+});
+
+// =============== SOCKET ===============
 function connectSocket(){
   socket=io({withCredentials:true});
   socket.on('message:new',msg=>{
     if(currentChat){
-      const isCur = currentChat.kind==='group'
+      const isCur=currentChat.kind==='group'
         ? msg.group_id===currentChat.id
-        : (msg.sender_id===currentChat.id||msg.recipient_id===currentChat.id) &&
-          (msg.sender_id===me.id||msg.recipient_id===me.id);
-      if(isCur){appendMessage(msg);}
+        : (msg.sender_id===currentChat.id||msg.recipient_id===currentChat.id)&&(msg.sender_id===me.id||msg.recipient_id===me.id);
+      if(isCur)appendMessage(msg);
     }
     loadChats();
   });
-  socket.on('message:deleted',({id})=>{
+  socket.on('message:deleted',({id,forAll})=>{
     const el=document.getElementById('m_'+id);
     if(el){const c=el.querySelector('.content');
-      if(c){c.innerHTML='<i>Pesan ini telah dihapus</i>';el.querySelector('.bubble')?.classList.add('deleted');}}
+      if(c)c.innerHTML='<i>Pesan ini telah dihapus</i>';
+      el.querySelector('.bubble')?.classList.add('deleted');}
     loadChats();
   });
   socket.on('typing',({from,isTyping})=>{
     if(!currentChat)return;
     if(currentChat.kind!=='group'&&from!==currentChat.id)return;
-    if(isTyping){
-      $('cStatus').textContent='sedang mengetik…';
-      clearTimeout(typingTO);typingTO=setTimeout(updateConvoStatus,3500);
-    }else updateConvoStatus();
+    if(isTyping){$('cStatus').textContent='sedang mengetik…';clearTimeout(typingTO);typingTO=setTimeout(updateConvoStatus,3500);}
+    else updateConvoStatus();
   });
   socket.on('status:new',loadUpdates);
   socket.on('group:new',loadChats);
+  socket.on('group:updated',()=>{if(currentInfo)openChatInfo(currentInfo);loadChats();});
   socket.on('call:new',loadCalls);
 }
 
-// ============ CHAT LIST ============
+// =============== CHAT LIST ===============
 async function loadChats(){
   try{
     const r=await fetch('/api/chats',{credentials:'include'});
     const d=await r.json();
-    const list=$('chatsList');
-    if(!d.chats||!d.chats.length){
-      list.innerHTML=`<div class="empty">${svgIco('chat')}<div>Belum ada chat.<br>Tap ikon cari untuk mulai.</div></div>`;
-      updateNavUnread(0);return;
-    }
-    let total=0;
-    list.innerHTML=d.chats.map(c=>{
-      total+=c.unread||0;
-      if(c.kind==='group'){
-        return `<div class="row" onclick='openGroup(${c.id},"${escapeHtml(c.name).replace(/"/g,'&quot;')}")'>
-          ${avatarHtml({display_name:c.name,avatar_url:null})}
-          <div class="body">
-            <div class="line1"><div class="name">${escapeHtml(c.name)}</div><div class="time">${formatTime(c.lastTime)}</div></div>
-            <div class="line2"><div class="preview">${c.lastMessage?escapeHtml(c.lastMessage).slice(0,50):'Grup baru'}</div></div>
-          </div>
-        </div>`;
-      }
-      const u=c.user;
-      const dot=u.is_online?'<span class="online-dot"></span>':'';
-      const preview=c.hasAtt?'<svg class="ico" style="width:14px;height:14px"><use href="#i-image"/></svg> '+escapeHtml(c.lastMessage||'').slice(0,45):escapeHtml(c.lastMessage||'').slice(0,55);
-      return `<div class="row" onclick='openChat(${JSON.stringify(JSON.stringify(u))})'>
-        <div style="position:relative">${avatarHtml(u)}${dot}</div>
-        <div class="body">
-          <div class="line1"><div class="name">${escapeHtml(u.display_name)}</div><div class="time ${c.unread>0?'unread':''}">${formatTime(c.lastTime)}</div></div>
-          <div class="line2"><div class="preview">${preview||'<i>Mulai percakapan</i>'}</div>
-            ${c.unread>0?`<div class="badge">${c.unread}</div>`:''}</div>
-        </div>
-      </div>`;
-    }).join('');
-    updateNavUnread(total);
+    allChats=d.chats||[];
+    renderChats();
   }catch(e){console.error(e);}
+}
+function renderChats(){
+  const list=$('chatsList');
+  let visible=allChats.filter(c=>!c.archived);
+  const archived=allChats.filter(c=>c.archived);
+  if(chatFilter==='unread')visible=visible.filter(c=>c.unread>0);
+  else if(chatFilter==='fav')visible=visible.filter(c=>c.favorited);
+  else if(chatFilter==='group')visible=visible.filter(c=>c.kind==='group');
+
+  if(!visible.length&&!archived.length&&!showArchived){
+    list.innerHTML=`<div class="empty">${ICO('chat')}<div>Belum ada chat.<br>Tap ikon cari untuk mulai.</div></div>`;
+    updateNavUnread(0);return;
+  }
+
+  let html='';
+  if(archived.length){
+    html+=`<div class="archived-row" onclick="toggleArchived()">
+      ${ICO('archive')}<div class="label">Diarsipkan</div><div class="count">${archived.length}</div>
+      ${ICO(showArchived?'chev-down':'chev-right','ico sm')}
+    </div>`;
+    if(showArchived)visible=[...archived,...visible];
+  }
+  html+=visible.map(renderChatRow).join('');
+  list.innerHTML=html||`<div class="empty">${ICO('chat')}<div>Tidak ada chat yang cocok</div></div>`;
+  const total=allChats.reduce((s,c)=>s+(c.unread||0),0);
+  updateNavUnread(total);
+}
+function toggleArchived(){showArchived=!showArchived;renderChats();}
+function renderChatRow(c){
+  if(c.kind==='group'){
+    const last=c.lastMessage?(c.lastMessage.length>45?c.lastMessage.slice(0,45)+'…':c.lastMessage):'Grup baru';
+    return `<div class="row" onclick='openGroup(${c.id},${JSON.stringify(JSON.stringify(c.name))})'>
+      ${avHtml({display_name:c.name,avatar_url:c.avatar_url})}
+      <div class="body">
+        <div class="line1">
+          <div class="name">${esc(c.name)}</div>
+          <div class="time">${c.pinned?ICO('pin','ico xs icon-mini'):''} ${formatTime(c.lastTime)}</div>
+        </div>
+        <div class="line2">
+          <div class="preview">${esc(last)}</div>
+          ${c.muted?ICO('bell-off','ico xs icon-mini'):''}
+        </div>
+      </div>
+    </div>`;
+  }
+  const u=c.user;
+  const dot=u.is_online?'<span class="online-dot"></span>':'';
+  const last=c.lastMessage||'';
+  const preview=c.hasAtt?`${ICO('image','ico xs')} ${esc(last.slice(0,42))}`:esc(last.slice(0,48));
+  return `<div class="row" onclick='openChat(${JSON.stringify(JSON.stringify(u))})'>
+    <div style="position:relative">${avHtml(u)}${dot}</div>
+    <div class="body">
+      <div class="line1">
+        <div class="name">${esc(u.display_name)}</div>
+        <div class="time ${c.unread>0?'unread':''}">
+          ${c.pinned?ICO('pin','ico xs icon-mini'):''}
+          ${formatTime(c.lastTime)}
+        </div>
+      </div>
+      <div class="line2">
+        <div class="preview">${preview||'<i>Mulai percakapan</i>'}</div>
+        ${c.muted?ICO('bell-off','ico xs icon-mini'):''}
+        ${c.unread>0?`<div class="badge">${c.unread}</div>`:''}
+      </div>
+    </div>
+  </div>`;
 }
 function updateNavUnread(n){const b=$('navUnread');if(n>0){b.textContent=n>99?'99+':n;b.classList.remove('hidden');}else b.classList.add('hidden');}
 $('chatSearch').oninput=()=>{
   clearTimeout(chatTimer);chatTimer=setTimeout(async()=>{
     const q=$('chatSearch').value.trim();
-    if(!q){loadChats();return;}
+    if(!q){renderChats();return;}
     const r=await fetch('/api/users?q='+encodeURIComponent(q),{credentials:'include'});
     const d=await r.json();
     const list=$('chatsList');
-    if(!d.users.length){list.innerHTML=`<div class="empty">${svgIco('search')}<div>Tidak ada user ditemukan</div></div>`;return;}
+    if(!d.users.length){list.innerHTML=`<div class="empty">${ICO('search')}<div>Tidak ada user ditemukan</div></div>`;return;}
     list.innerHTML=d.users.map(u=>`<div class="row" onclick='openChat(${JSON.stringify(JSON.stringify(u))})'>
-      ${avatarHtml(u)}
+      ${avHtml(u)}
       <div class="body">
-        <div class="line1"><div class="name">${escapeHtml(u.display_name)}</div></div>
-        <div class="line2"><div class="preview">@${escapeHtml(u.username)} — ${escapeHtml(u.about||'')}</div></div>
+        <div class="line1"><div class="name">${esc(u.display_name)}</div></div>
+        <div class="line2"><div class="preview">@${esc(u.username)} — ${esc(u.about||'')}</div></div>
       </div>
     </div>`).join('');
   },250);
 };
 
-// ============ CONVERSATION ============
+// =============== CONVERSATION ===============
 function openChat(json){
   const u=JSON.parse(json);
   currentChat={...u,kind:'user'};pendingReply=null;hideReplyBar();
   $('cName').textContent=u.display_name;
   updateConvoStatus();
-  $('cAv').innerHTML=u.avatar_url?`<img src="${escapeHtml(u.avatar_url)}" alt="">`:(u.display_name||'?')[0].toUpperCase();
+  $('cAv').innerHTML=u.avatar_url?`<img src="${esc(u.avatar_url)}" alt="">`:(u.display_name||'?')[0].toUpperCase();
   $('convo').classList.add('open');
   $('messages').innerHTML='<div style="text-align:center;color:var(--text-2);padding:20px;font-size:13px">Memuat…</div>';
   fetch(`/api/messages/${u.id}`,{credentials:'include'}).then(r=>r.json()).then(d=>{
-    renderMessages(d.messages);
+    renderMessages(d.messages||[]);
   });
   setTimeout(()=>$('msgInput').focus(),250);
 }
-function openGroup(id,name){
+function openGroup(id,nameJson){
+  const name=JSON.parse(nameJson);
   currentChat={id,kind:'group',display_name:name};pendingReply=null;hideReplyBar();
   $('cName').textContent=name;
-  $('cStatus').textContent='memuat anggota…';
+  $('cStatus').textContent='memuat…';
   $('cAv').innerHTML=(name||'?')[0].toUpperCase();
   $('convo').classList.add('open');
   $('messages').innerHTML='<div style="text-align:center;color:var(--text-2);padding:20px;font-size:13px">Memuat…</div>';
   fetch(`/api/groups/${id}/members`,{credentials:'include'}).then(r=>r.json()).then(d=>{
-    const names=(d.members||[]).map(m=>m.display_name).join(', ');
-    $('cStatus').textContent=names||'';
+    const ms=(d.members||[]).map(m=>m.display_name);
+    $('cStatus').textContent=ms.length?ms.join(', ').slice(0,80):'';
   });
   fetch(`/api/messages/group/${id}`,{credentials:'include'}).then(r=>r.json()).then(d=>{
-    renderMessages(d.messages);
+    renderMessages(d.messages||[]);
   });
   setTimeout(()=>$('msgInput').focus(),250);
 }
 function closeConvo(){$('convo').classList.remove('open');currentChat=null;loadChats();}
 function updateConvoStatus(){
-  if(!currentChat)return;
-  if(currentChat.kind==='group')return;
+  if(!currentChat||currentChat.kind==='group')return;
   const u=currentChat;
   $('cStatus').textContent=u.is_online?'online':(u.last_seen?'terakhir dilihat '+formatTime(u.last_seen):'');
 }
@@ -592,54 +802,53 @@ function renderMessage(msg){
   const mine=msg.sender_id===me.id;
   const div=document.createElement('div');
   div.className='msg '+(mine?'me':'them');div.id='m_'+msg.id;
-  if(msg.deleted){div.innerHTML=`<div class="bubble deleted"><div class="content"><i>Pesan ini telah dihapus</i></div></div>`;m_append(div);return;}
+  if(msg.deleted){
+    div.innerHTML=`<div class="bubble deleted"><div class="content"><i>Pesan ini telah dihapus</i></div></div>`;
+    mAppend(div);return;
+  }
   let attachHtml='';
   if(msg.attachment){
     const a=msg.attachment;
     if(a.kind==='image'){
-      attachHtml=`<img class="attach-img" src="${a.data}" onclick="viewImage('${a.data.replace(/'/g,'\\\'')}')" alt="">`;
+      attachHtml=`<img class="attach-img" src="${a.data}" onclick="viewImage('${(a.data||'').replace(/'/g,'\\\'')}')" alt="">`;
     }else{
-      const size=a.size?fmtSize(a.size):'';
-      attachHtml=`<a class="attach-file" href="${a.data}" download="${escapeHtml(a.name)}">
-        <div class="fico">${svgIco('file')}</div>
-        <div style="min-width:0"><div class="fname">${escapeHtml(a.name)}</div><div class="fsize">${size}</div></div>
+      attachHtml=`<a class="attach-file" href="${a.data}" download="${esc(a.name)}">
+        <div class="fico">${ICO('file','ico sm')}</div>
+        <div style="min-width:0;flex:1"><div class="fname">${esc(a.name)}</div><div class="fsize">${fmtSize(a.size)}</div></div>
       </a>`;
     }
   }
   let replyHtml='';
   if(msg.reply_to_id&&msg._reply){
-    replyHtml=`<div class="reply-preview"><div class="rp-name">${escapeHtml(msg._reply.name)}</div><div class="rp-text">${escapeHtml(msg._reply.text).slice(0,80)}</div></div>`;
+    replyHtml=`<div class="reply-preview"><div class="rp-name">${esc(msg._reply.name)}</div><div class="rp-text">${esc(msg._reply.text).slice(0,80)}</div></div>`;
   }
   const time=new Date(msg.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-  const check=mine?(msg.read_at?`<span class="check">${svgIco('check-2')}</span>`:`<span class="check" style="opacity:.6">${svgIco('check')}</span>`):'';
+  const check=mine?(msg.read_at?`<span class="check">${ICO('check-2','ico')}</span>`:`<span class="check" style="opacity:.6">${ICO('check','ico')}</span>`):'';
   let senderName='';
   if(!mine&&currentChat&&currentChat.kind==='group'){
-    senderName=`<div class="sender-name" style="color:${nameColor(msg.sender_id)}">User ${msg.sender_id}</div>`;
+    const c=['#53BDEB','#E542A3','#F5C33B','#7FD97A','#F0716A','#B47DFF'];
+    senderName=`<div class="sender-name" style="color:${c[msg.sender_id%c.length]}">User ${msg.sender_id}</div>`;
   }
-  div.innerHTML=`${senderName}<div class="bubble" data-mid="${msg.id}">
-    ${replyHtml}${attachHtml}
-    ${msg.content?`<div class="content">${linkify(escapeHtml(msg.content))}</div>`:''}
+  const isStarred=msg._starred?`<span class="star-badge">${ICO('star','ico xs')}</span>`:'';
+  div.innerHTML=`${senderName}<div class="bubble" data-mid="${msg.id}" style="position:relative">
+    ${isStarred}${replyHtml}${attachHtml}
+    ${msg.content?`<div class="content">${linkify(esc(msg.content))}</div>`:''}
     <div class="meta"><span>${time}</span>${check}</div>
   </div>`;
   const bub=div.querySelector('.bubble');
   let pressTimer;
-  const start=()=>{pressTimer=setTimeout(()=>{openMsgMenu(msg);},500);};
+  const start=()=>{pressTimer=setTimeout(()=>openMsgMenu(msg),500);};
   const cancel=()=>{clearTimeout(pressTimer);};
   bub.addEventListener('touchstart',start);bub.addEventListener('touchend',cancel);bub.addEventListener('touchmove',cancel);
   bub.addEventListener('contextmenu',e=>{e.preventDefault();openMsgMenu(msg);});
-  m_append(div);
+  mAppend(div);
 }
-function m_append(el){$('messages').appendChild(el);scrollBottom();}
-function appendMessage(msg){
-  const em=$('messages').querySelector('.empty');if(em)$('messages').innerHTML='';
-  renderMessage(msg);
-}
+function mAppend(el){$('messages').appendChild(el);scrollBottom();}
+function appendMessage(msg){const em=$('messages').querySelector('div[style]');if(em&&!em.id)$('messages').innerHTML='';renderMessage(msg);}
 function scrollBottom(){const el=$('messages');requestAnimationFrame(()=>el.scrollTop=el.scrollHeight);}
 function linkify(t){return t.replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">$1</a>');}
-function nameColor(id){const c=['#53BDEB','#E542A3','#F5C33B','#7FD97A','#F0716A','#B47DFF'];return c[id%c.length];}
-function fmtSize(b){if(b<1024)return b+' B';if(b<1048576)return (b/1024).toFixed(1)+' KB';return (b/1048576).toFixed(1)+' MB';}
 
-// ============ COMPOSER ============
+// =============== COMPOSER ===============
 const ta=$('msgInput');
 ta.oninput=()=>{
   ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,120)+'px';
@@ -662,7 +871,7 @@ function sendMsg(){
   ta.value='';ta.style.height='auto';cancelReply();
 }
 
-// ============ REPLY ============
+// =============== REPLY ===============
 function setReply(msg){
   pendingReply={id:msg.id,text:msg.content||msg.attachment?.name||'Lampiran',name:msg.sender_id===me.id?'Anda':'Kontak'};
   $('rbName').textContent='Membalas '+pendingReply.name;
@@ -673,49 +882,61 @@ function setReply(msg){
 function cancelReply(){pendingReply=null;hideReplyBar();}
 function hideReplyBar(){$('replyBar').classList.add('hidden');}
 
-// ============ MSG MENU ============
+// =============== MSG MENU ===============
 function openMsgMenu(msg){
   const mine=msg.sender_id===me.id;
   let rows='';
-  rows+=menuRow('reply','Balas',`setReply(${JSON.stringify(JSON.stringify(msg))});closeSheet()`);
+  rows+=`<div class="menu-row" onclick='setReply(${JSON.stringify(JSON.stringify(msg))});closeSheet()'>${ICO('reply')}<div style="flex:1">Balas</div></div>`;
+  if(msg.content&&!msg.attachment){
+    rows+=`<div class="menu-row" onclick='copyText(${JSON.stringify(JSON.stringify(msg.content))});closeSheet()'>${ICO('file')}<div style="flex:1">Salin</div></div>`;
+  }
   if(msg.attachment){
-    rows+=menuRow('file','Unduh',`downloadAtt(${JSON.stringify(JSON.stringify(msg.attachment))});closeSheet()`);
+    rows+=`<div class="menu-row" onclick='downloadAtt(${JSON.stringify(JSON.stringify(msg.attachment))});closeSheet()'>${ICO('download')}<div style="flex:1">Unduh</div></div>`;
   }
-  if(!msg.attachment&&msg.content){
-    rows+=menuRow('file','Salin',`copyText(${JSON.stringify(JSON.stringify(msg.content))});closeSheet()`);
-  }
+  rows+=`<div class="menu-row" onclick='toggleStar(${msg.id});closeSheet()'>${ICO('star')}<div style="flex:1">${msg._starred?'Hapus tanda':'Tandai bintang'}</div></div>`;
   if(mine){
-    rows+=menuRow('trash','Hapus','',true,`deleteMsg(${msg.id});closeSheet()`);
+    rows+=`<div class="menu-row danger" onclick='deleteMsg(${msg.id},true);closeSheet()'>${ICO('trash')}<div style="flex:1">Hapus untuk semua</div></div>`;
+    rows+=`<div class="menu-row danger" onclick='deleteMsg(${msg.id},false);closeSheet()'>${ICO('trash')}<div style="flex:1">Hapus untuk saya</div></div>`;
+  } else {
+    rows+=`<div class="menu-row danger" onclick='deleteMsg(${msg.id},false);closeSheet()'>${ICO('trash')}<div style="flex:1">Hapus untuk saya</div></div>`;
   }
   openSheet(`<h3>Pesan</h3>${rows}<button class="btn btn-ghost" onclick="closeSheet()">Tutup</button>`);
 }
-function menuRow(ico,label,onclick,danger,custom){
-  const fn=custom||onclick;
-  return `<div class="menu-row ${danger?'danger':''}" onclick='${fn.replace(/'/g,'&#39;')}'>${svgIco(ico)}<div class="label" style="flex:1">${label}</div></div>`;
-}
-async function deleteMsg(id){
-  if(!confirm('Hapus pesan ini?'))return;
-  const r=await fetch(`/api/messages/${id}/delete`,{method:'POST',credentials:'include'});
-  if(r.ok){const el=document.getElementById('m_'+id);if(el)el.remove();}
+async function deleteMsg(id,forAll){
+  const label=forAll?'Hapus untuk semua orang?':'Hapus untuk saya?';
+  if(!confirm(label))return;
+  const r=await fetch(`/api/messages/${id}/delete`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({forAll})});
+  if(r.ok){const el=document.getElementById('m_'+id);if(el){
+    if(forAll){const c=el.querySelector('.content');if(c)c.innerHTML='<i>Pesan ini telah dihapus</i>';el.querySelector('.bubble')?.classList.add('deleted');}
+    else el.remove();
+  }}
   else toast('Gagal hapus');
+}
+async function toggleStar(id){
+  const r=await fetch(`/api/messages/${id}/star`,{method:'POST',credentials:'include'});
+  const d=await r.json();
+  toast(d.starred?'Ditandai':'Tanda dihapus');
+  if(currentChat){
+    if(currentChat.kind==='group')openGroup(currentChat.id,JSON.stringify(currentChat.display_name));
+    else openChat(JSON.stringify(currentChat));
+  }
 }
 function copyText(json){const t=JSON.parse(json);navigator.clipboard.writeText(t).then(()=>toast('Disalin')).catch(()=>toast('Gagal salin'));}
 function downloadAtt(json){const a=JSON.parse(json);const link=document.createElement('a');link.href=a.data;link.download=a.name;link.click();}
 
-// ============ ATTACH ============
+// =============== ATTACH ===============
 function openAttach(){
   openSheet(`<h3>Lampiran</h3>
-    <div class="menu-row" onclick="pickFile('image/*')">${svgIco('image')}<div style="flex:1">Gambar</div></div>
-    <div class="menu-row" onclick="pickFile('*/*')">${svgIco('file')}<div style="flex:1">File / Dokumen</div></div>
+    <div class="menu-row" onclick="pickFile('image/*')">${ICO('image')}<div style="flex:1">Gambar</div></div>
+    <div class="menu-row" onclick="pickFile('*/*')">${ICO('file')}<div style="flex:1">Dokumen</div></div>
     <button class="btn btn-ghost" onclick="closeSheet()">Batal</button>`);
 }
 function pickFile(accept){
   closeSheet();
   const inp=$('fileInput');
-  inp.accept=accept;
-  inp.onchange=async()=>{
+  inp.accept=accept;inp.onchange=async()=>{
     const f=inp.files[0];if(!f)return;
-    if(f.size>2*1024*1024){toast('Maks 2MB');inp.value='';return;}
+    if(f.size>3*1024*1024){toast('Maksimal 3 MB');inp.value='';return;}
     const reader=new FileReader();
     reader.onload=async()=>{
       const data=reader.result;
@@ -727,16 +948,15 @@ function pickFile(accept){
       socket.emit('message:send',payload);
       cancelReply();
     };
-    reader.readAsDataURL(f);
-    inp.value='';
+    reader.readAsDataURL(f);inp.value='';
   };
   inp.click();
 }
+function startVoiceRec(){toast('Voice message — belum diaktifkan');}
 function viewImage(src){$('imgViewImg').src=src;$('imgView').classList.add('open');}
 
-// ============ EMOJI ============
-const EMOJIS=['😀','😃','😄','😁','😆','😅','😂','🤣','😊','😇','🙂','🙃','😉','😌','😍','🥰','😘','😗','😙','😚','😋','😛','😝','😜','🤪','🤨','🧐','🤓','😎','🤩','🥳','😏','😒','😞','😔','😟','😕','🙁','☹️','😣','😖','😫','😩','🥺','😢','😭','😤','😠','😡','🤬','🤯','😳','🥵','🥶','😱','😨','😰','😥','😓','🤗','🤔','🤭','🤫','🤥','😶','😐','😑','😬','🙄','😯','😦','😧','😮','😲','🥱','😴','🤤','😪','😵','🤐','🥴','🤢','🤮','🤧','😷','🤒','🤕','🤑','🤠','😈','👿','👹','👺','🤡','💩','👻','💀','☠️','👽','👾','🤖','🎃','😺','😸','😹','😻','😼','😽','🙀','😿','😾','👋','🤚','🖐','✋','🖖','👌','🤏','✌️','🤞','🤟','🤘','🤙','👈','👉','👆','🖕','👇','☝️','👍','👎','✊','👊','🤛','🤜','👏','🙌','👐','🤲','🤝','🙏','💪','❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❣️','💕','💞','💓','💗','💖','💘','💝','💟','🔥','⭐','🌟','✨','⚡','💥','💫','💦','💨','🎉','🎊','🎈','🎁','🏆','🥇','🥈','🥉','⚽','🏀','🏈','⚾','🎾','🏐','🏉','🎱','🏓','🏸','🥅','🏒','🏑','🥍','🏏','🥊','🥋','⛳','⛸','🎿','🛷','🥌','🎯','🎮','🕹','🎲','🎰','🎳','🎼','🎵','🎶','🎤','🎧','🎷','🎸','🎹','🎺','🎻','🥁','📱','💻','⌨️','🖥','🖨','🖱','🖲','💽','💾','💿','📀','📷','📸','📹','🎥','📽','🎞','📞','☎️','📟','📠','📺','📻','🎙','⏰','⌚','⏱','⏲','🕰','🧭','🌂','☂️','☔','⛱','🔥','💧','🌊','🍎','🍊','🍋','🍌','🍉','🍇','🍓','🍒','🍑','🥭','🍍','🥥','🥝','🍅','🥑','🥦','🥬','🥒','🌶','🌽','🥕','🧄','🧅','🥔','🍠','🥐','🥯','🍞','🥖','🥨','🧀','🥚','🍳','🥞','🧇','🥓','🥩','🍗','🍖','🌭','🍔','🍟','🍕','🥪','🥙','🧆','🌮','🌯','🥗','🥘','🥫','🍝','🍜','🍲','🍛','🍣','🍱','🥟','🍤','🍙','🍚','🍘','🍥','🥠','🥮','🍢','🍡','🍧','🍨','🍦','🥧','🧁','🍰','🎂','🍮','🍭','🍬','🍫','🍿','🍩','🍪','🌰','🥜','🍯','🥛','🍼','☕','🍵','🧃','🥤','🍶','🍺','🍻','🥂','🍷','🥃','🍸','🍹','🧉','🍾','🧊','🥄','🍴','🍽','🥣','🥡','🥢','🧂']
-
+// =============== EMOJI ===============
+const EMOJIS=['😀','😃','😄','😁','😆','😅','😂','🤣','😊','😇','🙂','🙃','😉','😌','😍','🥰','😘','😗','😙','😚','😋','😛','😝','😜','🤪','🤨','🧐','🤓','😎','🤩','🥳','😏','😒','😞','😔','😟','😕','🙁','☹️','😣','😖','😫','😩','🥺','😢','😭','😤','😠','😡','🤬','🤯','😳','🥵','🥶','😱','😨','😰','😥','😓','🤗','🤔','🤭','🤫','🤥','😶','😐','😑','😬','🙄','😯','😦','😧','😮','😲','🥱','😴','🤤','😪','😵','🤐','🥴','🤢','🤮','🤧','😷','🤒','🤕','🤑','🤠','😈','👿','👹','👺','🤡','💩','👻','💀','☠️','👽','👾','🤖','🎃','😺','😸','😹','😻','😼','😽','🙀','😿','😾','👋','🤚','🖐','✋','🖖','👌','🤏','✌️','🤞','🤟','🤘','🤙','👈','👉','👆','🖕','👇','☝️','👍','👎','✊','👊','🤛','🤜','👏','🙌','👐','🤲','🤝','🙏','💪','❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❣️','💕','💞','💓','💗','💖','💘','💝','💟','🔥','⭐','🌟','✨','⚡','💥','💫','💦','💨','🎉','🎊','🎈','🎁','🏆','🥇','🥈','🥉'];
 function openEmoji(){
   const grid=EMOJIS.map(e=>`<button type="button" onclick="insertEmoji('${e}')">${e}</button>`).join('');
   openSheet(`<h3>Emoji</h3><div class="emoji-grid">${grid}</div>
@@ -744,18 +964,315 @@ function openEmoji(){
 }
 function insertEmoji(e){ta.value+=e;ta.focus();}
 
-// ============ NEW CHAT / GROUP ============
+// =============== CHAT INFO / CONTACT INFO ===============
+function openChatInfo(){
+  if(!currentChat)return;
+  currentInfo=currentChat;
+  $('infoPage').classList.add('open');
+  if(currentChat.kind==='group')loadGroupInfo(currentChat.id);
+  else loadContactInfo(currentChat.id);
+}
+function closeInfo(){$('infoPage').classList.remove('open');currentInfo=null;}
+async function loadContactInfo(uid){
+  $('infoTitle').textContent='Info kontak';
+  $('infoBody').innerHTML=`<div style="text-align:center;padding:40px;color:var(--text-2)">Memuat…</div>`;
+  const [uR,mR] = await Promise.all([
+    fetch(`/api/users/${uid}`,{credentials:'include'}).then(r=>r.json()),
+    fetch(`/api/chats/user/${uid}/media`,{credentials:'include'}).then(r=>r.json())
+  ]);
+  const u=uR.user;
+  const media=(mR.media||[]).filter(m=>m.attachment&&m.attachment.kind==='image').slice(0,6);
+  const chatSetting=allChats.find(c=>c.kind==='user'&&c.id===uid)||{};
+  $('infoBody').innerHTML=`
+    <div class="info-section info-profile">
+      ${avHtml(u,'av lg')}
+      <div class="n">${esc(u.display_name)}</div>
+      <div class="about">${esc(u.about||'')}</div>
+      <div style="font-size:13px;color:var(--text-2);margin-bottom:18px">@${esc(u.username)}</div>
+      <div class="info-actions">
+        <button class="act" onclick="startCall('voice')">${ICO('phone','ico sm')} Suara</button>
+        <button class="act" onclick="startCall('video')">${ICO('video','ico sm')} Video</button>
+      </div>
+    </div>
+    ${media.length?`
+    <div class="info-section">
+      <div class="info-media-title" onclick="openMediaGrid()">
+        <div class="t">Media, tautan, dan dok</div>
+        <div class="n">${media.length} ›</div>
+      </div>
+      <div class="info-media-grid">
+        ${media.map(m=>`<div class="mi" onclick="viewImage('${(m.attachment.data||'').replace(/'/g,'\\\'')}')"><img src="${m.attachment.data}"></div>`).join('')}
+      </div>
+    </div>`:''}
+    <div class="info-section">
+      <div class="info-row" onclick="toggleChatMute()">
+        ${ICO(chatSetting.muted?'bell-off':'bell')}
+        <div class="lbl">${chatSetting.muted?'Bunyikan notifikasi':'Bisukan notifikasi'}</div>
+      </div>
+      <div class="info-row" onclick="toggleChatPin()">
+        ${ICO('pin')}
+        <div class="lbl">${chatSetting.pinned?'Lepas sematan':'Sematkan chat'}</div>
+      </div>
+      <div class="info-row" onclick="toggleChatFav()">
+        ${ICO('star')}
+        <div class="lbl">${chatSetting.favorited?'Hapus dari favorit':'Tambah ke favorit'}</div>
+      </div>
+      <div class="info-row" onclick="toggleChatArchive()">
+        ${ICO('archive')}
+        <div class="lbl">${chatSetting.archived?'Buka arsip':'Arsipkan chat'}</div>
+      </div>
+    </div>
+    <div class="info-section">
+      <div class="info-row danger" onclick="blockUser(${u.id})">
+        ${ICO('block')}
+        <div class="lbl">${u.blocked?'Buka blokir':'Blokir kontak'}</div>
+      </div>
+      <div class="info-row danger" onclick="clearChatLocal()">
+        ${ICO('trash')}
+        <div class="lbl">Bersihkan chat</div>
+      </div>
+    </div>
+  `;
+}
+async function loadGroupInfo(gid){
+  $('infoTitle').textContent='Info grup';
+  $('infoBody').innerHTML=`<div style="text-align:center;padding:40px;color:var(--text-2)">Memuat…</div>`;
+  const [gR,mR,mediaR] = await Promise.all([
+    fetch(`/api/groups/${gid}`,{credentials:'include'}).then(r=>r.json()),
+    fetch(`/api/groups/${gid}/members`,{credentials:'include'}).then(r=>r.json()),
+    fetch(`/api/chats/group/${gid}/media`,{credentials:'include'}).then(r=>r.json())
+  ]);
+  const g=gR.group||{};
+  const members=mR.members||[];
+  const media=(mediaR.media||[]).filter(m=>m.attachment&&m.attachment.kind==='image').slice(0,6);
+  const meM=members.find(m=>m.id===me.id);
+  const isAdmin=meM&&meM.role==='admin';
+  const chatSetting=allChats.find(c=>c.kind==='group'&&c.id===gid)||{};
+  $('infoBody').innerHTML=`
+    <div class="info-section info-profile">
+      ${avHtml({display_name:g.name,avatar_url:g.avatar_url},'av lg')}
+      <div class="n">${esc(g.name||'Grup')}</div>
+      <div class="about">Grup · ${members.length} anggota</div>
+      ${g.description?`<div style="font-size:14px;color:var(--text-2);margin-bottom:14px;padding:0 12px">${esc(g.description)}</div>`:''}
+      <div class="info-actions">
+        <button class="act" onclick="startCall('voice')">${ICO('phone','ico sm')} Suara</button>
+        <button class="act" onclick="startCall('video')">${ICO('video','ico sm')} Video</button>
+        <button class="act" onclick="openAddMembers(${gid})">${ICO('users','ico sm')} Tambah</button>
+      </div>
+    </div>
+    ${media.length?`
+    <div class="info-section">
+      <div class="info-media-title">
+        <div class="t">Media, tautan, dan dok</div>
+        <div class="n">${media.length} ›</div>
+      </div>
+      <div class="info-media-grid">
+        ${media.map(m=>`<div class="mi" onclick="viewImage('${(m.attachment.data||'').replace(/'/g,'\\\'')}')"><img src="${m.attachment.data}"></div>`).join('')}
+      </div>
+    </div>`:''}
+    <div class="info-section">
+      <div style="font-size:14px;color:var(--text-2);padding:0 0 10px">${members.length} anggota</div>
+      ${members.map(m=>`
+        <div class="member-row" onclick='openMemberOptions(${gid},${JSON.stringify(JSON.stringify(m))},${isAdmin})'>
+          ${avHtml(m,'av sm')}
+          <div style="flex:1;min-width:0">
+            <div class="name" style="font-size:15px">${m.id===me.id?'Anda':esc(m.display_name)}</div>
+            <div style="font-size:12.5px;color:var(--text-2)">${esc(m.about||'')}</div>
+          </div>
+          ${m.role==='admin'?'<span class="role">Admin</span>':''}
+        </div>
+      `).join('')}
+    </div>
+    <div class="info-section">
+      <div class="info-row" onclick="toggleChatMute()">
+        ${ICO(chatSetting.muted?'bell-off':'bell')}<div class="lbl">${chatSetting.muted?'Bunyikan':'Bisukan'} notifikasi</div>
+      </div>
+      <div class="info-row" onclick="toggleChatArchive()">
+        ${ICO('archive')}<div class="lbl">${chatSetting.archived?'Buka arsip':'Arsipkan chat'}</div>
+      </div>
+      <div class="info-row danger" onclick="leaveGroup(${gid})">
+        ${ICO('logout')}<div class="lbl">Keluar dari grup</div>
+      </div>
+    </div>
+  `;
+}
+function openMemberOptions(gid,memJson,isAdmin){
+  const m=JSON.parse(memJson);
+  const isSelf=m.id===me.id;
+  let rows='';
+  if(!isSelf&&isAdmin){
+    if(m.role!=='admin')rows+=`<div class="menu-row" onclick="promoteMember(${gid},${m.id});closeSheet()">${ICO('star')}<div style="flex:1">Jadikan admin</div></div>`;
+    rows+=`<div class="menu-row danger" onclick="kickMember(${gid},${m.id});closeSheet()">${ICO('logout')}<div style="flex:1">Keluarkan dari grup</div></div>`;
+  }
+  if(isSelf){rows+=`<div class="menu-row danger" onclick="leaveGroup(${gid});closeSheet()">${ICO('logout')}<div style="flex:1">Keluar dari grup</div></div>`;}
+  if(!rows)rows=`<div style="padding:12px;color:var(--text-2);font-size:14px;text-align:center">Tidak ada opsi</div>`;
+  openSheet(`<h3>${esc(m.display_name)}</h3>${rows}<button class="btn btn-ghost" onclick="closeSheet()">Tutup</button>`);
+}
+async function promoteMember(gid,uid){
+  await fetch(`/api/groups/${gid}/members/${uid}/promote`,{method:'POST',credentials:'include'});
+  toast('Jadikan admin');loadGroupInfo(gid);
+}
+async function kickMember(gid,uid){
+  if(!confirm('Keluarkan anggota ini?'))return;
+  await fetch(`/api/groups/${gid}/members/${uid}`,{method:'DELETE',credentials:'include'});
+  toast('Anggota dikeluarkan');loadGroupInfo(gid);
+}
+async function leaveGroup(gid){
+  if(!confirm('Keluar dari grup ini?'))return;
+  await fetch(`/api/groups/${gid}/leave`,{method:'POST',credentials:'include'});
+  toast('Keluar dari grup');closeSheet();closeInfo();closeConvo();loadChats();
+}
+async function openAddMembers(gid){
+  const r=await fetch('/api/users?q=',{credentials:'include'});
+  const d=await r.json();
+  const mR=await fetch(`/api/groups/${gid}/members`,{credentials:'include'});
+  const mD=await mR.json();
+  const existing=new Set((mD.members||[]).map(m=>m.id));
+  const available=(d.users||[]).filter(u=>!existing.has(u.id));
+  window._addSel=new Set();
+  openSheet(`<h3>Tambah anggota</h3>
+    <div style="max-height:320px;overflow-y:auto;margin-bottom:10px">
+      ${available.map(u=>`<div class="user-pick" data-uid="${u.id}" onclick="toggleAdd(this)">
+        <div class="cb">${ICO('check','ico xs')}</div>
+        ${avHtml(u,'av sm')}
+        <div style="flex:1"><div class="name">${esc(u.display_name)}</div></div>
+      </div>`).join('')||'<div style="text-align:center;color:var(--text-2);padding:20px">Tidak ada user tersedia</div>'}
+    </div>
+    <button class="btn" onclick="doAddMembers(${gid})">Tambah</button>
+    <button class="btn btn-ghost" onclick="closeSheet()">Batal</button>`);
+}
+function toggleAdd(el){
+  const uid=parseInt(el.dataset.uid,10);
+  if(window._addSel.has(uid)){window._addSel.delete(uid);el.classList.remove('on');}
+  else{window._addSel.add(uid);el.classList.add('on');}
+}
+async function doAddMembers(gid){
+  const ids=[...window._addSel];if(!ids.length)return toast('Pilih minimal 1');
+  await fetch(`/api/groups/${gid}/members`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({userIds:ids})});
+  toast('Anggota ditambahkan');closeSheet();loadGroupInfo(gid);loadChats();
+}
+function openInfoMenu(){
+  if(!currentInfo)return;
+  if(currentInfo.kind==='group'){
+    openSheet(`<h3>Menu grup</h3>
+      <div class="menu-row" onclick="editGroupInfo()">${ICO('edit')}<div style="flex:1">Edit info grup</div></div>
+      <div class="menu-row" onclick="closeSheet()">${ICO('x')}<div style="flex:1">Tutup</div></div>`);
+  } else {
+    openSheet(`<h3>Menu</h3>
+      <div class="menu-row" onclick="closeSheet()">${ICO('user')}<div style="flex:1">Info kontak</div></div>`);
+  }
+}
+function editGroupInfo(){
+  closeSheet();
+  openSheet(`<h3>Edit grup</h3>
+    <input id="egName" placeholder="Nama grup">
+    <input id="egDesc" placeholder="Deskripsi">
+    <button class="btn" onclick="saveGroupInfo()">Simpan</button>
+    <button class="btn btn-ghost" onclick="closeSheet()">Batal</button>`);
+}
+async function saveGroupInfo(){
+  const name=$('egName').value.trim();
+  const description=$('egDesc').value.trim();
+  if(!name)return toast('Isi nama');
+  await fetch(`/api/groups/${currentInfo.id}`,{method:'PATCH',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({name,description})});
+  closeSheet();toast('Grup diupdate');loadGroupInfo(currentInfo.id);loadChats();
+}
+async function blockUser(uid){
+  const u=await fetch(`/api/users/${uid}`,{credentials:'include'}).then(r=>r.json());
+  const blocked=u.user?.blocked;
+  if(blocked){
+    await fetch(`/api/users/${uid}/block`,{method:'DELETE',credentials:'include'});
+    toast('Blokir dibuka');
+  }else{
+    if(!confirm('Blokir kontak ini?'))return;
+    await fetch(`/api/users/${uid}/block`,{method:'POST',credentials:'include'});
+    toast('Kontak diblokir');
+  }
+  loadContactInfo(uid);
+}
+async function toggleChatMute(){
+  const c=currentInfo;
+  const key=c.kind+':'+c.id;
+  const isMuted=!!(allChats.find(x=>x.kind===c.kind&&x.id===c.id)||{}).muted;
+  await fetch(`/api/chats/${c.kind}/${c.id}/settings`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({muted:!isMuted})});
+  await loadChats();
+  if(c.kind==='group')loadGroupInfo(c.id);else loadContactInfo(c.id);
+}
+async function toggleChatPin(){
+  const c=currentInfo;
+  const isPinned=!!(allChats.find(x=>x.kind===c.kind&&x.id===c.id)||{}).pinned;
+  await fetch(`/api/chats/${c.kind}/${c.id}/settings`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({pinned:!isPinned})});
+  await loadChats();
+  if(c.kind==='group')loadGroupInfo(c.id);else loadContactInfo(c.id);
+}
+async function toggleChatFav(){
+  const c=currentInfo;
+  const isFav=!!(allChats.find(x=>x.kind===c.kind&&x.id===c.id)||{}).favorited;
+  await fetch(`/api/chats/${c.kind}/${c.id}/settings`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({favorited:!isFav})});
+  await loadChats();
+  loadContactInfo(c.id);
+}
+async function toggleChatArchive(){
+  const c=currentInfo;
+  const isArc=!!(allChats.find(x=>x.kind===c.kind&&x.id===c.id)||{}).archived;
+  await fetch(`/api/chats/${c.kind}/${c.id}/settings`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({archived:!isArc})});
+  await loadChats();
+  toast(isArc?'Dibuka dari arsip':'Diarsipkan');
+  if(c.kind==='group')loadGroupInfo(c.id);else loadContactInfo(c.id);
+}
+function clearChatLocal(){
+  toast('Chat dibersihkan (lokal)');
+}
+async function openMediaGrid(){
+  const c=currentInfo;if(!c)return;
+  const url=c.kind==='group'?`/api/chats/group/${c.id}/media`:`/api/chats/user/${c.id}/media`;
+  const r=await fetch(url,{credentials:'include'});
+  const d=await r.json();
+  const imgs=(d.media||[]).filter(m=>m.attachment&&m.attachment.kind==='image');
+  if(!imgs.length)return toast('Tidak ada media');
+  openSheet(`<h3>Media (${imgs.length})</h3>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;max-height:60vh;overflow-y:auto">
+      ${imgs.map(m=>`<div onclick="viewImage('${(m.attachment.data||'').replace(/'/g,'\\\'')}');closeSheet()" style="aspect-ratio:1;overflow:hidden;border-radius:6px;cursor:pointer">
+        <img src="${m.attachment.data}" style="width:100%;height:100%;object-fit:cover">
+      </div>`).join('')}
+    </div>
+    <button class="btn btn-ghost" onclick="closeSheet()">Tutup</button>`);
+}
+
+// =============== CHAT MENU (header) ===============
+function openChatMenu(){
+  if(!currentChat)return;
+  const isGroup=currentChat.kind==='group';
+  let rows='';
+  rows+=`<div class="menu-row" onclick="closeSheet();openChatInfo()">${ICO('info')}<div style="flex:1">Info ${isGroup?'grup':'kontak'}</div></div>`;
+  rows+=`<div class="menu-row" onclick="closeSheet();toast('Cari dalam chat')">${ICO('search')}<div style="flex:1">Cari dalam chat</div></div>`;
+  if(!isGroup){
+    rows+=`<div class="menu-row" onclick="closeSheet();toggleMuteFromMenu()">${ICO('bell-off')}<div style="flex:1">Bisukan</div></div>`;
+  }
+  rows+=`<div class="menu-row" onclick="closeSheet();toast('Wallpaper')">${ICO('palette')}<div style="flex:1">Wallpaper</div></div>`;
+  rows+=`<div class="menu-row" onclick="closeSheet();clearChatLocal()">${ICO('trash')}<div style="flex:1">Bersihkan chat</div></div>`;
+  openSheet(`<h3>Menu</h3>${rows}<button class="btn btn-ghost" onclick="closeSheet()">Tutup</button>`);
+}
+async function toggleMuteFromMenu(){
+  if(!currentChat)return;
+  const isMuted=!!(allChats.find(c=>c.kind===currentChat.kind&&c.id===currentChat.id)||{}).muted;
+  await fetch(`/api/chats/${currentChat.kind}/${currentChat.id}/settings`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({muted:!isMuted})});
+  await loadChats();
+  toast(isMuted?'Notifikasi dinyalakan':'Chat dibisukan');
+}
+
+// =============== NEW CHAT SHEET ===============
 function openNewChatSheet(){
   openSheet(`<h3>Chat baru</h3>
-    <input id="ncSearch" placeholder="Cari username atau nama..." oninput="ncSearchUsers()">
-    <div id="ncResults" style="max-height:340px;overflow-y:auto;margin-bottom:8px"></div>
-    <button class="btn" onclick="openCreateGroup()">Buat grup baru</button>
+    <input id="ncSearch" placeholder="Cari username atau nama..." oninput="ncSearch()">
+    <div id="ncResults" style="max-height:320px;overflow-y:auto;margin-bottom:8px"></div>
+    <button class="btn" onclick="openCreateGroup()">${ICO('users','ico sm')} Buat grup baru</button>
     <button class="btn btn-ghost" onclick="closeSheet()">Batal</button>`);
-  setTimeout(()=>$('ncSearch').focus(),200);
-  ncSearchUsers();
+  setTimeout(()=>$('ncSearch')?.focus(),200);
+  ncSearch();
 }
 let ncTimer=null;
-function ncSearchUsers(){
+function ncSearch(){
   clearTimeout(ncTimer);ncTimer=setTimeout(async()=>{
     const q=($('ncSearch')?.value||'').trim();
     const r=await fetch('/api/users?q='+encodeURIComponent(q),{credentials:'include'});
@@ -763,24 +1280,23 @@ function ncSearchUsers(){
     const box=$('ncResults');if(!box)return;
     if(!d.users.length){box.innerHTML=`<div style="text-align:center;color:var(--text-2);padding:20px;font-size:14px">Tidak ada user</div>`;return;}
     box.innerHTML=d.users.map(u=>`<div class="user-pick" onclick='openChat(${JSON.stringify(JSON.stringify(u))});closeSheet()'>
-      ${avatarHtml(u,'av sm')}
-      <div style="flex:1;min-width:0"><div class="name">${escapeHtml(u.display_name)}</div><div style="font-size:12px;color:var(--text-2)">@${escapeHtml(u.username)}</div></div>
+      ${avHtml(u,'av sm')}
+      <div style="flex:1;min-width:0"><div class="name">${esc(u.display_name)}</div><div style="font-size:12.5px;color:var(--text-2)">@${esc(u.username)}</div></div>
     </div>`).join('');
   },220);
 }
 async function openCreateGroup(){
   const r=await fetch('/api/users?q=',{credentials:'include'});
   const d=await r.json();
-  const allUsers=d.users||[];
   window._groupSel=new Set();
   openSheet(`<h3>Buat Grup</h3>
     <input id="gName" placeholder="Nama grup">
-    <div style="font-size:13px;color:var(--text-2);margin:6px 0 10px">Pilih anggota:</div>
-    <div style="max-height:300px;overflow-y:auto;margin-bottom:10px" id="gMembers">
-      ${allUsers.map(u=>`<div class="user-pick" data-uid="${u.id}" onclick="toggleGm(this)">
-        <div class="cb">${svgIco('check')}</div>
-        ${avatarHtml(u,'av sm')}
-        <div style="flex:1;min-width:0"><div class="name">${escapeHtml(u.display_name)}</div></div>
+    <div style="font-size:13.5px;color:var(--text-2);margin:6px 0 10px">Pilih anggota:</div>
+    <div style="max-height:300px;overflow-y:auto;margin-bottom:10px">
+      ${(d.users||[]).map(u=>`<div class="user-pick" data-uid="${u.id}" onclick="toggleGm(this)">
+        <div class="cb">${ICO('check','ico xs')}</div>
+        ${avHtml(u,'av sm')}
+        <div style="flex:1;min-width:0"><div class="name">${esc(u.display_name)}</div></div>
       </div>`).join('')||'<div style="text-align:center;color:var(--text-2);padding:20px">Belum ada user lain</div>'}
     </div>
     <button class="btn" onclick="createGroupNow()">Buat grup</button>
@@ -796,15 +1312,14 @@ async function createGroupNow(){
   if(!name)return toast('Isi nama grup');
   const ids=[...window._groupSel];
   if(!ids.length)return toast('Pilih minimal 1 anggota');
-  const r=await fetch('/api/groups',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',
-    body:JSON.stringify({name,memberIds:ids})});
-  if(r.ok){const d=await r.json();closeSheet();toast('Grup dibuat');loadChats();
+  const r=await fetch('/api/groups',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({name,memberIds:ids})});
+  if(r.ok){const d=await r.json();closeSheet();toast('Grup dibuat');await loadChats();
     document.querySelector('.nav button[data-tab="chats"]').click();
-    openGroup(d.group.id,d.group.name);
-  } else toast('Gagal buat grup');
+    openGroup(d.group.id,JSON.stringify(d.group.name));
+  }else toast('Gagal buat grup');
 }
 
-// ============ UPDATES ============
+// =============== UPDATES ===============
 async function loadUpdates(){
   const r=await fetch('/api/statuses',{credentials:'include'});
   const d=await r.json();
@@ -812,9 +1327,13 @@ async function loadUpdates(){
   const mine=d.statuses.filter(s=>s.user_id===me.id);
   const others=d.statuses.filter(s=>s.user_id!==me.id);
   let html='';
-  html+=`<div class="my-status" onclick="openStatusSheet()">
-    <div style="position:relative">${avatarHtml(me,'av')}<span class="plus">${svgIco('plus')}</span></div>
-    <div style="flex:1"><div style="font-weight:500">Status saya</div><div style="font-size:13px;color:var(--text-2)">${mine.length?'Ketuk untuk lihat':'Ketuk untuk tambah pembaruan'}</div></div>
+  html+=`<div class="row" onclick="openStatusSheet()">
+    <div style="position:relative">${avHtml(me,'av')}
+      <span style="position:absolute;bottom:-2px;right:-2px;width:22px;height:22px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;border:2px solid var(--panel)">${ICO('plus','ico xs')}</span>
+    </div>
+    <div class="body"><div class="line1"><div class="name">Status saya</div></div>
+      <div class="line2"><div class="preview">${mine.length?`${mine.length} pembaruan · ketuk untuk lihat`:'Ketuk untuk tambah pembaruan'}</div></div>
+    </div>
   </div>`;
   if(others.length){
     html+='<div class="section-title">Pembaruan terbaru</div>';
@@ -823,16 +1342,22 @@ async function loadUpdates(){
     Object.values(byUser).forEach(({user,items})=>{
       const latest=items[0];
       const viewed=items.every(i=>i.viewed_by_me);
+      const initials=(user.display_name||'?')[0].toUpperCase();
+      const avH=user.avatar_url?`<img src="${esc(user.avatar_url)}">`:initials;
       html+=`<div class="row" onclick='viewUserStatus(${user.user_id})'>
-        <div class="ring ${viewed?'viewed':''}"><div class="inner">${avatarHtml(user)}</div></div>
+        <div style="padding:2.5px;border-radius:50%;background:${viewed?'var(--text-2)':'linear-gradient(45deg,#00A884,#06CF9C)'}">
+          <div style="padding:2px;background:var(--panel);border-radius:50%">
+            <div class="av">${avH}</div>
+          </div>
+        </div>
         <div class="body">
-          <div class="line1"><div class="name">${escapeHtml(user.display_name)}</div><div class="time">${formatTime(latest.created_at)}</div></div>
+          <div class="line1"><div class="name">${esc(user.display_name)}</div><div class="time">${formatTime(latest.created_at)}</div></div>
           <div class="line2"><div class="preview">${items.length} pembaruan</div></div>
         </div>
       </div>`;
     });
   }else{
-    html+=`<div class="empty">${svgIco('status')}<div>Belum ada pembaruan dari kontak lain.</div></div>`;
+    html+=`<div class="empty">${ICO('status')}<div>Belum ada pembaruan dari kontak lain.</div></div>`;
   }
   list.innerHTML=html;
 }
@@ -867,7 +1392,7 @@ function showStatus(){
   const s=statusList[statusIdx];
   $('svName').textContent=s.display_name;
   $('svTime').textContent=formatTime(s.created_at);
-  $('svAv').innerHTML=s.avatar_url?`<img src="${escapeHtml(s.avatar_url)}">`:(s.display_name||'?')[0].toUpperCase();
+  $('svAv').innerHTML=s.avatar_url?`<img src="${esc(s.avatar_url)}">`:(s.display_name||'?')[0].toUpperCase();
   $('svBody').style.background=s.bg_color||'#00A884';
   $('svBody').textContent=s.content;
   $('statusProgress').innerHTML=statusList.map((_,i)=>`<div class="bar ${i<statusIdx?'done':''}"><div class="fill" style="${i===statusIdx?'width:0%':''}"></div></div>`).join('');
@@ -877,110 +1402,138 @@ function showStatus(){
   clearTimeout(statusTimer);statusTimer=setTimeout(nextStatus,5200);
 }
 function nextStatus(){statusIdx++;showStatus();}
+function prevStatus(){if(statusIdx>0){statusIdx--;showStatus();}}
 function closeStatusViewer(){clearTimeout(statusTimer);$('statusViewer').classList.remove('open');statusList=[];statusIdx=0;loadUpdates();}
 
-// ============ CALLS ============
+// =============== CALLS ===============
 async function loadCalls(){
   const r=await fetch('/api/calls',{credentials:'include'});
   const d=await r.json();
   const list=$('callsList');
-  if(!d.calls.length){list.innerHTML=`<div class="empty">${svgIco('phone')}<div>Belum ada riwayat panggilan</div></div>`;return;}
+  if(!d.calls.length){list.innerHTML=`<div class="empty">${ICO('phone')}<div>Belum ada riwayat panggilan</div></div>`;return;}
   list.innerHTML=d.calls.map(c=>{
-    const arrow=c.direction==='incoming'?svgIco('phone'):svgIco('phone');
     const missed=c.status==='missed';
+    const arrow=c.direction==='incoming'?'phone-in':(missed?'phone-missed':'phone-out');
+    const color=missed?'#F87171':'var(--brand)';
     return `<div class="row">
-      ${avatarHtml(c.user)}
+      ${avHtml(c.user)}
       <div class="body">
-        <div class="line1"><div class="name" style="${missed?'color:#F87171':''}">${escapeHtml(c.user?.display_name||'Unknown')}</div><div class="time">${formatTime(c.created_at)}</div></div>
+        <div class="line1"><div class="name" style="${missed?'color:#F87171':''}">${esc(c.user?.display_name||'Unknown')}</div><div class="time">${formatTime(c.created_at)}</div></div>
         <div class="line2"><div class="preview" style="display:flex;align-items:center;gap:6px">
-          ${c.direction==='incoming'?'↙':'↗'} ${c.type==='video'?'Video':'Suara'}${missed?' • tidak terjawab':''}
+          <svg class="ico xs" style="color:${color}"><use href="#i-${arrow}"/></svg>
+          ${c.direction==='incoming'?'Masuk':'Keluar'} · ${c.type==='video'?'Video':'Suara'}${missed?' · tidak terjawab':''}
         </div></div>
       </div>
-      <button class="icon-btn" onclick='callFromHistory(${c.user?.id})' aria-label="Panggil">${svgIco('phone')}</button>
+      <button class="icon-btn" onclick='startCallTo(${c.user?.id},"voice")' aria-label="Panggil">${ICO('phone')}</button>
     </div>`;
   }).join('');
 }
-function callFromHistory(uid){
+function openDialPad(){
+  openSheet(`<h3>Panggil nomor</h3>
+    <input id="dialNum" type="tel" placeholder="Nomor telepon" style="text-align:center;font-size:22px;letter-spacing:2px">
+    <div style="display:flex;justify-content:center;margin-bottom:14px">
+      <button class="send-btn" onclick="dialCall()">${ICO('phone')}</button>
+    </div>
+    <button class="btn btn-ghost" onclick="closeSheet()">Tutup</button>`);
+}
+function dialCall(){toast('Panggilan tidak didukung — nomor tidak terdaftar');closeSheet();}
+async function startCallTo(uid,type){
   if(!uid)return;
-  toast('Panggilan belum aktif — butuh TURN server. Dicatat sebagai riwayat.');
-  fetch('/api/calls',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',
-    body:JSON.stringify({recipientId:uid,type:'voice',status:'missed'})}).then(()=>loadCalls());
+  const r=await fetch('/api/users/'+uid,{credentials:'include'}).then(r=>r.json());
+  const u=r.user;
+  showCallScreen(u,type);
+  await fetch('/api/calls',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({recipientId:uid,type,status:'missed'})}).catch(()=>{});
+  setTimeout(()=>{$('callStatus').textContent='Panggilan tidak dapat terhubung (butuh server TURN)';},3500);
 }
-function openCallPicker(){
-  fetch('/api/users?q=',{credentials:'include'}).then(r=>r.json()).then(d=>{
-    openSheet(`<h3>Panggil kontak</h3>
-      <div style="max-height:340px;overflow-y:auto">
-        ${(d.users||[]).map(u=>`<div class="user-pick" onclick='makeCall(${u.id},"voice");closeSheet()'>
-          ${avatarHtml(u,'av sm')}
-          <div style="flex:1;min-width:0"><div class="name">${escapeHtml(u.display_name)}</div></div>
-          ${svgIco('phone')}
-        </div>`).join('')||'<div style="text-align:center;color:var(--text-2);padding:20px">Belum ada kontak</div>'}
-      </div>
-      <button class="btn btn-ghost" onclick="closeSheet()">Tutup</button>`);
-  });
+async function startCall(type){
+  if(!currentChat)return;
+  if(currentChat.kind==='group')return toast('Panggilan grup belum didukung');
+  startCallTo(currentChat.id,type);
 }
-function makeCall(uid,type){
-  toast('Panggilan '+(type==='video'?'video':'suara')+' belum aktif — butuh TURN server.');
-  fetch('/api/calls',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',
-    body:JSON.stringify({recipientId:uid,type,status:'missed'})}).then(()=>loadCalls());
+function showCallScreen(user,type){
+  $('callName').textContent=user?.display_name||'Kontak';
+  $('callStatus').textContent='Memanggil...';
+  $('callAv').innerHTML=user?.avatar_url?`<img src="${esc(user.avatar_url)}">`:(user?.display_name||'?')[0].toUpperCase();
+  $('callScreen').classList.add('open');
 }
-function fakeCall(type){
-  if(!currentChat||currentChat.kind==='group')return toast('Panggilan grup belum didukung');
-  makeCall(currentChat.id,type);
-}
+function endCall(){$('callScreen').classList.remove('open');loadCalls();}
 
-// ============ SETTINGS ============
+// =============== SETTINGS ===============
 function renderSettings(){
   const isDark=document.documentElement.dataset.theme!=='light';
   $('settingsList').innerHTML=`
     <div class="settings-profile" onclick="openProfileSheet()">
-      ${avatarHtml(me,'av')}
+      ${avHtml(me)}
       <div class="info">
-        <div class="n">${escapeHtml(me.display_name)}</div>
-        <div class="a">${escapeHtml(me.about||'Hai! Saya pakai EKK CHAT.')}</div>
+        <div class="n">${esc(me.display_name)}</div>
+        <div class="a">${esc(me.about||'Hai! Saya pakai EKK CHAT.')}</div>
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="setting-row" onclick="openChangePassword()">
+        ${ICO('key')}
+        <div class="lbl">Akun</div>
+        <div class="val">@${esc(me.username)}</div>
+        ${ICO('chev-right','ico sm icon-mini')}
+      </div>
+      <div class="setting-row" onclick="openPrivacy()">
+        ${ICO('lock')}
+        <div class="lbl">Privasi</div>
+        ${ICO('chev-right','ico sm icon-mini')}
+      </div>
+      <div class="setting-row" onclick="openBlockedList()">
+        ${ICO('block')}
+        <div class="lbl">Kontak diblokir</div>
+        ${ICO('chev-right','ico sm icon-mini')}
+      </div>
+      <div class="setting-row" onclick="openStarredList()">
+        ${ICO('star')}
+        <div class="lbl">Pesan berbintang</div>
+        ${ICO('chev-right','ico sm icon-mini')}
       </div>
     </div>
     <div class="settings-section">
       <div class="setting-row" onclick="toggleTheme()">
-        <div style="width:36px;display:flex;justify-content:center">${svgIco(isDark?'moon':'sun')}</div>
-        <div class="label">Tema</div><div class="value">${isDark?'Gelap':'Terang'}</div>
+        ${ICO(isDark?'moon':'sun')}
+        <div class="lbl">Tema</div>
+        <div class="val">${isDark?'Gelap':'Terang'}</div>
+        ${ICO('chev-right','ico sm icon-mini')}
       </div>
-      <div class="setting-row" onclick="openProfileSheet()">
-        <div style="width:36px;display:flex;justify-content:center">${svgIco('user')}</div>
-        <div class="label">Profil</div><div class="value">@${escapeHtml(me.username)}</div>
+      <div class="setting-row" onclick="toast('Wallpaper belum diaktifkan')">
+        ${ICO('palette')}
+        <div class="lbl">Wallpaper chat</div>
+        ${ICO('chev-right','ico sm icon-mini')}
       </div>
-      <div class="setting-row" onclick="toast('Info privasi')">
-        <div style="width:36px;display:flex;justify-content:center">${svgIco('lock')}</div>
-        <div class="label">Privasi</div>
-      </div>
-      <div class="setting-row" onclick="toast('Info notifikasi')">
-        <div style="width:36px;display:flex;justify-content:center">${svgIco('bell')}</div>
-        <div class="label">Notifikasi</div>
+      <div class="setting-row" onclick="toast('Notifikasi browser: izinkan via browser settings')">
+        ${ICO('bell')}
+        <div class="lbl">Notifikasi</div>
+        ${ICO('chev-right','ico sm icon-mini')}
       </div>
     </div>
     <div class="settings-section">
       <div class="setting-row" onclick="openAbout()">
-        <div style="width:36px;display:flex;justify-content:center">${svgIco('info')}</div>
-        <div class="label">Tentang EKK CHAT</div>
+        ${ICO('info')}
+        <div class="lbl">Tentang EKK CHAT</div>
+        ${ICO('chev-right','ico sm icon-mini')}
+      </div>
+      <div class="setting-row" onclick="toast('Pusat bantuan')">
+        ${ICO('help')}
+        <div class="lbl">Bantuan</div>
+        ${ICO('chev-right','ico sm icon-mini')}
       </div>
       <div class="setting-row danger" onclick="logout()">
-        <div style="width:36px;display:flex;justify-content:center">${svgIco('logout')}</div>
-        <div class="label">Keluar</div>
+        ${ICO('logout')}
+        <div class="lbl">Keluar</div>
       </div>
-    </div>`;
+    </div>
+  `;
 }
 function openProfileSheet(){
   openSheet(`<h3>Edit profil</h3>
-    <div style="text-align:center;margin-bottom:14px">
-      <div style="display:inline-block;position:relative">
-        ${avatarHtml(me,'av')}
-      </div>
-      <div style="margin-top:10px">
-        <input id="pAvatar" placeholder="URL foto profil (opsional)" value="${escapeHtml(me.avatar_url||'')}" style="text-align:center">
-      </div>
-    </div>
-    <input id="pName" placeholder="Nama tampilan" value="${escapeHtml(me.display_name)}">
-    <input id="pAbout" placeholder="Info" value="${escapeHtml(me.about||'')}">
+    <div style="text-align:center;margin-bottom:14px">${avHtml(me,'av lg')}</div>
+    <input id="pAvatar" placeholder="URL foto profil" value="${esc(me.avatar_url||'')}">
+    <input id="pName" placeholder="Nama" value="${esc(me.display_name)}">
+    <input id="pAbout" placeholder="Info" value="${esc(me.about||'')}">
     <button class="btn" onclick="saveProfile()">Simpan</button>
     <button class="btn btn-ghost" onclick="closeSheet()">Batal</button>`);
 }
@@ -989,10 +1542,56 @@ async function saveProfile(){
   const about=$('pAbout').value.trim();
   const avatarUrl=$('pAvatar').value.trim();
   if(!displayName)return toast('Nama wajib diisi');
-  const r=await fetch('/api/me',{method:'PATCH',headers:{'Content-Type':'application/json'},credentials:'include',
-    body:JSON.stringify({displayName,about,avatarUrl:avatarUrl||null})});
+  const r=await fetch('/api/me',{method:'PATCH',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({displayName,about,avatarUrl:avatarUrl||null})});
   if(r.ok){const d=await r.json();me=d.user;closeSheet();toast('Profil disimpan');renderSettings();loadChats();}
   else toast('Gagal simpan');
+}
+function openChangePassword(){
+  openSheet(`<h3>Ganti Password</h3>
+    <input id="pCur" type="password" placeholder="Password saat ini">
+    <input id="pNew" type="password" placeholder="Password baru (min 6)">
+    <button class="btn" onclick="doChangePassword()">Simpan</button>
+    <button class="btn btn-ghost" onclick="closeSheet()">Batal</button>`);
+}
+async function doChangePassword(){
+  const current=$('pCur').value,next=$('pNew').value;
+  if(!current||!next)return toast('Isi semua');
+  if(next.length<6)return toast('Min 6 karakter');
+  const r=await fetch('/api/me/password',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({current,next})});
+  if(r.ok){closeSheet();toast('Password diubah');}
+  else toast('Password lama salah');
+}
+function openPrivacy(){
+  openSheet(`<h3>Privasi</h3>
+    <div style="color:var(--text-2);font-size:14px;padding:8px 0">EKK CHAT menyimpan data Anda di server kami sendiri (bukan Meta/WhatsApp).</div>
+    <button class="btn btn-ghost" onclick="closeSheet()">Tutup</button>`);
+}
+async function openBlockedList(){
+  const r=await fetch('/api/users/blocked/list',{credentials:'include'});
+  const d=await r.json();
+  openSheet(`<h3>Kontak diblokir</h3>
+    ${(d.blocked||[]).map(u=>`<div class="user-pick">
+      ${avHtml(u,'av sm')}
+      <div style="flex:1;min-width:0"><div class="name">${esc(u.display_name)}</div></div>
+      <button class="chip" onclick="unblockUser(${u.id})">Buka blokir</button>
+    </div>`).join('')||'<div style="text-align:center;color:var(--text-2);padding:20px">Belum ada</div>'}
+    <button class="btn btn-ghost" onclick="closeSheet()">Tutup</button>`);
+}
+async function unblockUser(uid){
+  await fetch(`/api/users/${uid}/block`,{method:'DELETE',credentials:'include'});
+  toast('Blokir dibuka');openBlockedList();
+}
+async function openStarredList(){
+  const r=await fetch('/api/starred',{credentials:'include'});
+  const d=await r.json();
+  openSheet(`<h3>Pesan berbintang</h3>
+    <div style="max-height:400px;overflow-y:auto">
+      ${(d.messages||[]).map(m=>`<div style="padding:10px;border-bottom:1px solid var(--border)">
+        <div style="font-size:13px;color:var(--text-2);margin-bottom:4px">${formatTime(m.created_at)}</div>
+        <div style="font-size:14px">${esc(m.content||(m.attachment?m.attachment.name:'[media]'))}</div>
+      </div>`).join('')||'<div style="text-align:center;color:var(--text-2);padding:20px">Belum ada</div>'}
+    </div>
+    <button class="btn btn-ghost" onclick="closeSheet()">Tutup</button>`);
 }
 function toggleTheme(){
   const isLight=document.documentElement.dataset.theme==='light';
@@ -1002,8 +1601,8 @@ function toggleTheme(){
 }
 function openAbout(){
   openSheet(`<h3>Tentang EKK CHAT</h3>
-    <p style="color:var(--text-2);font-size:14px;line-height:1.5">EKK CHAT adalah messenger buatan sendiri. Bukan WhatsApp. Bukan afiliasi Meta.</p>
-    <p style="color:var(--text-2);font-size:14px;line-height:1.5">Chat realtime + pembaruan status + riwayat panggilan + pengaturan.</p>
+    <p style="color:var(--text-2);font-size:14px;line-height:1.5">EKK CHAT adalah aplikasi messenger buatan sendiri. <b>Bukan WhatsApp. Tidak berafiliasi dengan Meta.</b></p>
+    <p style="color:var(--text-2);font-size:14px;line-height:1.5">Versi 0.2 — chat realtime, pembaruan status, panggilan (log), pengaturan lengkap.</p>
     <button class="btn btn-ghost" onclick="closeSheet()">Tutup</button>`);
 }
 async function logout(){
@@ -1012,19 +1611,21 @@ async function logout(){
   if(socket)socket.disconnect();
   location.reload();
 }
-function openMenu(){
+function openMainMenu(){
   openSheet(`<h3>Menu</h3>
-    <div class="menu-row" onclick="closeSheet();openNewChatSheet()">${svgIco('search')}<div style="flex:1">Chat baru</div></div>
-    <div class="menu-row" onclick="closeSheet();openCreateGroup()">${svgIco('users')}<div style="flex:1">Grup baru</div></div>
-    <div class="menu-row" onclick="closeSheet();toggleTheme()">${svgIco('moon')}<div style="flex:1">Ganti tema</div></div>
+    <div class="menu-row" onclick="closeSheet();openNewChatSheet()">${ICO('search')}<div style="flex:1">Chat baru</div></div>
+    <div class="menu-row" onclick="closeSheet();openCreateGroup()">${ICO('users')}<div style="flex:1">Grup baru</div></div>
+    <div class="menu-row" onclick="closeSheet();openStarredList()">${ICO('star')}<div style="flex:1">Pesan berbintang</div></div>
+    <div class="menu-row" onclick="closeSheet();toggleTheme()">${ICO('moon')}<div style="flex:1">Ganti tema</div></div>
+    <div class="menu-row" onclick="closeSheet();openBlockedList()">${ICO('block')}<div style="flex:1">Kontak diblokir</div></div>
     <button class="btn btn-ghost" onclick="closeSheet()">Tutup</button>`);
 }
 
-// ============ SHEET ============
+// =============== SHEET ===============
 function openSheet(html){$('sheet').innerHTML=html;$('sheetBackdrop').classList.add('open');}
 function closeSheet(e){if(e&&e.target&&e.target.id!=='sheetBackdrop')return;$('sheetBackdrop').classList.remove('open');}
 
-// ============ BOOT ============
+// =============== BOOT ===============
 if(localStorage.getItem('ekk_theme'))document.documentElement.dataset.theme=localStorage.getItem('ekk_theme');
 setAuthMode('login');
 tryAutoLogin();
